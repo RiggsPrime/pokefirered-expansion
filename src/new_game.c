@@ -8,6 +8,7 @@
 #include "easy_chat.h"
 #include "event_data.h"
 #include "event_scripts.h"
+#include "field_specials.h"
 #include "follower_npc.h"
 #include "item_menu.h"
 #include "item.h"
@@ -21,7 +22,6 @@
 #include "pokemon_jump.h"
 #include "pokemon_size_record.h"
 #include "pokemon_storage_system.h"
-#include "quest_log.h"
 #include "random.h"
 #include "renewable_hidden_items.h"
 #include "roamer.h"
@@ -110,7 +110,6 @@ void ResetMenuAndMonGlobals(void)
     ResetBagScrollPositions();
     ResetTMCaseCursorPos();
     BerryPouch_CursorResetToTop();
-    ResetQuestLog();
     SeedWildEncounterRng(Random());
     ResetSpecialVars();
 }
@@ -119,7 +118,7 @@ void NewGameInitData(void)
 {
     u8 rivalName[PLAYER_NAME_LENGTH + 1];
 
-    if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_INVALID)
+    if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_CORRUPT)
         RtcReset();
 
     StringCopy(rivalName, gSaveBlock1Ptr->rivalName);

@@ -11,13 +11,15 @@
 #include "field_specials.h"
 #include "field_weather.h"
 #include "fieldmap.h"
+#include "fieldmap.h"
 #include "fldeff.h"
 #include "follower_npc.h"
 #include "link.h"
+#include "link.h"
 #include "map_preview_screen.h"
 #include "metatile_behavior.h"
+#include "metatile_behavior.h"
 #include "overworld.h"
-#include "quest_log.h"
 #include "script.h"
 #include "start_menu.h"
 #include "task.h"
@@ -279,7 +281,6 @@ static void ExitWarpFadeInScreen(bool8 playerNotMoving)
 void FieldCB_DefaultWarpExit(void)
 {
     Overworld_PlaySpecialMapMusic();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     SetUpWarpExitTask(FALSE);
     FollowerNPC_WarpSetEnd();
     LockPlayerFieldControls();
@@ -288,7 +289,6 @@ void FieldCB_DefaultWarpExit(void)
 void FieldCB_WarpExitFadeFromBlack(void)
 {
     Overworld_PlaySpecialMapMusic();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     SetUpWarpExitTask(TRUE);
     LockPlayerFieldControls();
 }
@@ -297,7 +297,6 @@ static void FieldCB_TeleportWarpIn(void)
 {
     Overworld_PlaySpecialMapMusic();
     WarpFadeInScreen();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     PlaySE(SE_WARP_OUT);
     CreateTask(Task_TeleportWarpIn, 10);
     LockPlayerFieldControls();

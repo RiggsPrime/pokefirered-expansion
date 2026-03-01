@@ -16,8 +16,6 @@
 #include "fieldmap.h"
 #include "frontier_pass.h"
 #include "gpu_regs.h"
-#include "help_message.h"
-#include "help_system.h"
 #include "item_menu.h"
 #include "link_rfu.h"
 #include "link.h"
@@ -31,7 +29,6 @@
 #include "party_menu.h"
 #include "pokedex_screen.h"
 #include "pokedex.h"
-#include "quest_log.h"
 #include "rtc.h"
 #include "safari_zone.h"
 #include "save.h"
@@ -424,8 +421,6 @@ static void RemoveExtraStartMenuWindows(void)
         RemoveWindow(sBattlePyramidFloorWindowId);
     }
     DestroyTimeWindow();
-    if (DEBUG_OVERWORLD_MENU != TRUE)
-        DestroyHelpMessageWindow(COPYWIN_GFX);
 }
 
 #define tCounter data[0]
@@ -555,8 +550,6 @@ static s8 InitStartMenuStep(void)
         break;
     case 6:
         sStartMenuCursorPos = InitMenuNormal(GetStartMenuWindowId(), FONT_NORMAL, 0, 0, 15, sNumStartMenuItems, sStartMenuCursorPos);
-        if (DEBUG_OVERWORLD_MENU != TRUE && !MenuHelpers_IsLinkActive() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-            DrawHelpMessageWindowWithText(sStartMenuDescPointers[sCurrentStartMenuActions[sStartMenuCursorPos]]);
         CopyWindowToVram(GetStartMenuWindowId(), COPYWIN_MAP);
         return TRUE;
     }
@@ -639,18 +632,13 @@ static bool8 HandleStartMenuInput(void)
     {
         PlaySE(SE_SELECT);
         sStartMenuCursorPos = Menu_MoveCursor(-1);
-        if (DEBUG_OVERWORLD_MENU != TRUE && !MenuHelpers_IsLinkActive() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-            PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sCurrentStartMenuActions[sStartMenuCursorPos]], COPYWIN_GFX);
     }
 
     if (JOY_NEW(DPAD_DOWN))
     {
         PlaySE(SE_SELECT);
         sStartMenuCursorPos = Menu_MoveCursor(+1);
-        if (DEBUG_OVERWORLD_MENU != TRUE && !MenuHelpers_IsLinkActive() && InUnionRoom() != TRUE && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_HELP)
-            PrintTextOnHelpMessageWindow(sStartMenuDescPointers[sCurrentStartMenuActions[sStartMenuCursorPos]], COPYWIN_GFX);
     }
-
     if (JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
@@ -855,8 +843,6 @@ static bool8 StartMenuBattlePyramidBagCallback(void)
 
 static bool8 SaveStartCallback(void)
 {
-    BackupHelpContext();
-    SetHelpContext(HELPCONTEXT_SAVE);
     InitSave();
     gMenuCallback = SaveCallback;
 
@@ -872,7 +858,6 @@ static bool8 SaveCallback(void)
     case SAVE_CANCELED:
         ClearDialogWindowAndFrameToTransparent(0, FALSE);
         InitStartMenu();
-        RestoreHelpContext();
         gMenuCallback = HandleStartMenuInput;
         break;
     case SAVE_SUCCESS:
@@ -880,7 +865,6 @@ static bool8 SaveCallback(void)
         ClearDialogWindowAndFrameToTransparent(0, TRUE);
         ScriptUnfreezeObjectEvents();
         UnlockPlayerFieldControls();
-        RestoreHelpContext();
         SoftResetInBattlePyramid();
         return TRUE;
     }
@@ -942,8 +926,6 @@ static u8 RunSaveCallback(void)
 
 void SaveGame(void)
 {
-    BackupHelpContext();
-    SetHelpContext(HELPCONTEXT_SAVE);
     InitSave();
     CreateTask(SaveGameTask, 80);
 }
@@ -973,7 +955,6 @@ static void SaveGameTask(u8 taskId)
     }
     DestroyTask(taskId);
     ScriptContext_Enable();
-    RestoreHelpContext();
 }
 
 static void HideSaveMessageWindow(void)
@@ -1033,9 +1014,6 @@ static u8 SaveConfirmSaveCallback(void)
     ClearStdWindowAndFrame(GetStartMenuWindowId(), FALSE);
     RemoveStartMenuWindow();
     DestroyTimeWindow();
-    if (DEBUG_OVERWORLD_MENU != TRUE)
-        DestroyHelpMessageWindow(COPYWIN_NONE);
-
     ShowSaveInfoWindow();
 
     if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE)
@@ -1058,7 +1036,7 @@ static u8 SaveConfirmInputCallback(void)
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
     case 0:
-        if ((gSaveFileStatus != SAVE_STATUS_EMPTY && gSaveFileStatus != SAVE_STATUS_INVALID) || !gDifferentSaveFile)
+        if ((gSaveFileStatus != SAVE_STATUS_EMPTY && gSaveFileStatus != SAVE_STATUS_CORRUPT) || !gDifferentSaveFile)
             sSaveDialogCallback = SaveFileExistsCallback;
         else
             sSaveDialogCallback = SaveSavingMessageCallback;
@@ -1114,7 +1092,6 @@ static u8 SaveOverwriteInputCallback(void)
 
 static u8 SaveSavingMessageCallback(void)
 {
-    SaveQuestLogData();
     ShowSaveMessage(gText_SavingDontTurnOffThePower, SaveDoSaveCallback);
     return SAVE_IN_PROGRESS;
 }

@@ -10,7 +10,6 @@
 #include "field_weather.h"
 #include "gpu_regs.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "item.h"
 #include "item_icon.h"
 #include "list_menu.h"
@@ -1221,7 +1220,6 @@ void CB2_Pokemon_Sprite_Visualizer(void)
     {
         case 0:
         default:
-            HelpSystem_DisableNoSound();
             SetVBlankCallback(NULL);
             FreeMonSpritesGfx();
             ResetBGs_PokemonSpriteVisualizer(0);
@@ -2085,6 +2083,5 @@ static void Exit_PokemonSpriteVisualizer(u8 taskId)
         DestroyTask(taskId);
         SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
         m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, 0x100);
-        HelpSystem_Enable();
     }
 }

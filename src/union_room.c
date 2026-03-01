@@ -14,7 +14,6 @@
 #include "field_player_avatar.h"
 #include "field_weather.h"
 #include "fieldmap.h"
-#include "help_message.h"
 #include "link_rfu.h"
 #include "link.h"
 #include "list_menu.h"
@@ -27,7 +26,6 @@
 #include "palette.h"
 #include "party_menu.h"
 #include "pokemon_jump.h"
-#include "quest_log.h"
 #include "random.h"
 #include "save_location.h"
 #include "script_pokemon_util.h"
@@ -2948,7 +2946,6 @@ static void Task_RunUnionRoom(u8 taskId)
                     break;
                 }
             }
-            DestroyHelpMessageWindow(COPYWIN_GFX);
         }
         break;
     case UR_STATE_REGISTER_SELECT_MON_FADE:
@@ -3031,7 +3028,6 @@ static void Task_RunUnionRoom(u8 taskId)
             case LIST_CANCEL:
             case 8: // EXIT
                 HandleCancelActivity(TRUE);
-                DestroyHelpMessageWindow(COPYWIN_GFX);
                 uroom->state = UR_STATE_MAIN;
                 break;
             default:
@@ -3155,8 +3151,6 @@ void InitUnionRoom(void)
     struct WirelessLink_URoom * data;
 
     sUnionRoomPlayerName[0] = EOS;
-    if (QL_IS_PLAYBACK_STATE)
-        return;
     CreateTask(Task_InitUnionRoom, 0);
     sWirelessLinkMain.uRoom = sWirelessLinkMain.uRoom; // Needed to match.
     sWirelessLinkMain.uRoom = data = AllocZeroed(sizeof(struct WirelessLink_URoom));

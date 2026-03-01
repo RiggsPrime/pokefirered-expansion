@@ -3,7 +3,6 @@
 #include "battle_special.h"
 #include "easy_chat.h"
 #include "event_data.h"
-#include "help_system.h"
 #include "link_rfu.h"
 #include "link.h"
 #include "mystery_gift_menu.h"

@@ -771,7 +771,6 @@ BattleFrontier_BattleTowerLobby_EventScript_TryCableLink::
 	setvar VAR_0x8004, USING_BATTLE_TOWER
 	message CableClub_Text_PleaseWaitBCancel
 	waitmessage
-	special HelpSystem_Disable
 	textcolor NPC_TEXT_COLOR_NEUTRAL
 	special TryBattleLinkup
 	waitstate

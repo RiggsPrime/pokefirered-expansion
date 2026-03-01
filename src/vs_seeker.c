@@ -23,7 +23,6 @@
 #include "constants/event_objects.h"
 #include "constants/maps.h"
 #include "constants/items.h"
-#include "constants/quest_log.h"
 #include "constants/script_commands.h"
 #include "constants/trainer_types.h"
 #include "constants/vs_seeker.h"
@@ -1647,7 +1646,6 @@ void Task_VsSeeker_0(u8 taskId)
     }
     else if (respval == VSSEEKER_CAN_USE)
     {
-        ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, 0, gSpecialVar_ItemId, 0xFFFF);
         FieldEffectStart(FLDEFF_USE_VS_SEEKER);
         gTasks[taskId].func = Task_VsSeeker_1;
         gTasks[taskId].data[0] = 15;

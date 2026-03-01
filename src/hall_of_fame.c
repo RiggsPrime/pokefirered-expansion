@@ -7,9 +7,7 @@
 #include "save.h"
 #include "data.h"
 #include "m4a.h"
-#include "help_system.h"
 #include "hall_of_fame.h"
-#include "quest_log.h"
 #include "pc_screen_effect.h"
 #include "strings.h"
 #include "credits.h"
@@ -310,7 +308,6 @@ static bool8 InitHallOfFameScreen(void)
     switch (gMain.state)
     {
     case 0:
-        gHelpSystemStatus = HELP_DISABLED;
         SetVBlankCallback(NULL);
         ClearVramOamPltt_LoadHofPal();
         sHofGfxPtr = AllocZeroed(sizeof(struct HofGfx));
@@ -424,7 +421,6 @@ static void Task_Hof_InitTeamSaveData(u8 taskId)
     u16 i;
     struct HallofFameTeam* lastSavedTeam = gHoFSaveBuffer;
 
-    SaveQuestLogData();
     if (!gHasHallOfFameRecords)
     {
         memset(gHoFSaveBuffer, 0, SECTOR_SIZE * NUM_HOF_SECTORS);
@@ -469,10 +465,23 @@ static void FreeAllHoFMem(void)
 static void Task_Hof_TrySaveData(u8 taskId)
 {
     gGameContinueCallback = CB2_DoHallOfFameScreenDontSaveData;
-    TrySavingData(SAVE_HALL_OF_FAME);
-    PlaySE(SE_SAVE);
-    gTasks[taskId].func = Task_Hof_DelayAfterSave;
-    gTasks[taskId].data[3] = 32;
+    if (TrySavingData(SAVE_HALL_OF_FAME) == SAVE_STATUS_ERROR && gDamagedSaveSectors != 0)
+    {
+        UnsetBgTilemapBuffer(1);
+        UnsetBgTilemapBuffer(3);
+        FreeAllWindowBuffers();
+
+        TRY_FREE_AND_SET_NULL(sHofGfxPtr);
+        TRY_FREE_AND_SET_NULL(sHofMonPtr);
+
+        DestroyTask(taskId);
+    }
+    else
+    {
+        PlaySE(SE_SAVE);
+        gTasks[taskId].func = Task_Hof_DelayAfterSave;
+        gTasks[taskId].data[3] = 32;
+    }
 }
 
 static void Task_Hof_DelayAfterSave(u8 taskId)

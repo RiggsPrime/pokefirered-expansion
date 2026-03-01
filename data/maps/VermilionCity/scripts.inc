@@ -78,8 +78,6 @@ VermilionCity_EventScript_CheckSeagallopPresent::
 	end
 
 VermilionCity_EventScript_ChooseFrontierUnlocked::
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	message VermilionCity_Text_BoardSeagallopFerry
 	waitmessage
 	dynmultipush Seagallop_SeviiIslands, 0
@@ -123,8 +121,6 @@ Seagallop_Cancel::
 	.string "CANCEL$"
 
 VermilionCity_EventScript_ChooseSeagallopDestRainbowPass::
-	goto_if_questlog EventScript_ReleaseEnd
-	special QuestLog_CutRecording
 	call VermilionCity_EventScript_CheckHasMysticTicket
 	goto_if_eq VAR_RESULT, TRUE, VermilionCity_EventScript_HasMysticTicket
 	call VermilionCity_EventScript_CheckHasAuroraTicket

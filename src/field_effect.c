@@ -13,13 +13,11 @@
 #include "field_weather.h"
 #include "fieldmap.h"
 #include "follower_npc.h"
-#include "help_system.h"
 #include "metatile_behavior.h"
 #include "menu.h"
 #include "overworld.h"
 #include "party_menu.h"
 #include "pokemon_storage_system.h"
-#include "quest_log.h"
 #include "rtc.h"
 #include "script.h"
 #include "special_field_anim.h"
@@ -424,45 +422,17 @@ static void UNUSED FieldEffectScript_LoadTiles(const struct SpriteSheet * sprite
         LoadSpriteSheet(spriteSheet);
 }
 
-void ApplyGlobalFieldPaletteTint(u8 paletteIdx)
-{
-    switch (gGlobalFieldTintMode)
-    {
-    case 0:
-        return;
-    case 1:
-        TintPalette_GrayScale(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
-        break;
-    case 2:
-        TintPalette_SepiaTone(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
-        break;
-    case 3:
-        QuestLog_BackUpPalette(OBJ_PLTT_ID2(paletteIdx), 16);
-        TintPalette_GrayScale(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
-        break;
-    default:
-        return;
-    }
-    CpuFastCopy(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], &gPlttBufferFaded[OBJ_PLTT_ID2(paletteIdx)], PLTT_SIZE_4BPP);
-}
-
 void FieldEffectScript_LoadFadedPal(const struct SpritePalette * spritePalette)
 {
-    bool32 isTagNew = IndexOfSpritePaletteTag(spritePalette->tag) == 0xFF;
     u32 paletteSlot = LoadSpritePalette(spritePalette);
 
     SetPaletteColorMapType(paletteSlot + 16, COLOR_MAP_DARK_CONTRAST);
-    if (isTagNew)
-        ApplyGlobalFieldPaletteTint(paletteSlot);
     UpdateSpritePaletteWithWeather(paletteSlot, TRUE);
 }
 
 void FieldEffectScript_LoadPal(const struct SpritePalette * spritePalette)
 {
-    u8 idx = IndexOfSpritePaletteTag(spritePalette->tag);
     LoadSpritePalette(spritePalette);
-    if (idx != 0xFF)
-        ApplyGlobalFieldPaletteTint(IndexOfSpritePaletteTag(spritePalette->tag));
 }
 
 void FieldEffectFreeGraphicsResources(struct Sprite *sprite)
@@ -1183,7 +1153,6 @@ void FieldCB_FallWarpExit(void)
 {
     Overworld_PlaySpecialMapMusic();
     WarpFadeInScreen();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     LockPlayerFieldControls();
     FreezeObjectEvents();
     CreateTask(Task_FallWarpFieldEffect, 0);
@@ -1311,7 +1280,6 @@ static bool8 FallWarpEffect_7(struct Task *task)
     {
         VarSet(VAR_TEMP_1, 1);
         SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_SURFING);
-        SetHelpContext(HELPCONTEXT_SURFING);
     }
     DestroyTask(FindTaskIdByFunc(Task_FallWarpFieldEffect));
     FollowerNPC_WarpSetEnd();
@@ -1379,7 +1347,6 @@ static bool8 EscalatorWarpEffect_1(struct Task *task)
     CameraObjectReset2();
     StartEscalator(task->data[1]);
     HideFollowerForFieldEffect(); // Hide follower before warping
-    QuestLog_OnEscalatorWarp(QL_ESCALATOR_OUT);
     task->data[0]++;
     return FALSE;
 }
@@ -1501,7 +1468,6 @@ static void FieldCB_EscalatorWarpIn(void)
 {
     Overworld_PlaySpecialMapMusic();
     WarpFadeInScreen();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     LockPlayerFieldControls();
     FreezeObjectEvents();
     CreateTask(Task_EscalatorWarpInFieldEffect, 0);
@@ -1626,7 +1592,6 @@ static bool8 EscalatorWarpInEffect_7(struct Task *task)
         UnfreezeObjectEvents();
         ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(DIR_EAST));
         DestroyTask(FindTaskIdByFunc(Task_EscalatorWarpInFieldEffect));
-        QuestLog_OnEscalatorWarp(QL_ESCALATOR_IN);
     }
     return FALSE;
 }
@@ -1914,7 +1879,6 @@ static void FieldCB_LavaridgeGymB1FWarpExit(void)
 {
     Overworld_PlaySpecialMapMusic();
     WarpFadeInScreen();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     LockPlayerFieldControls();
     gFieldCallback = NULL;
     CreateTask(Task_LavaridgeGymB1FWarpExit, 0);
@@ -2361,7 +2325,6 @@ static void FieldCallback_EscapeRopeExit(void)
 {
     Overworld_PlaySpecialMapMusic();
     WarpFadeInScreen();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     LockPlayerFieldControls();
     FreezeObjectEvents();
     gFieldCallback = NULL;
@@ -2540,7 +2503,6 @@ static void FieldCallback_TeleportIn(void)
 {
     Overworld_PlaySpecialMapMusic();
     WarpFadeInScreen();
-    QuestLog_DrawPreviouslyOnQuestHeaderIfInPlaybackMode();
     LockPlayerFieldControls();
     FreezeObjectEvents();
     gFieldCallback = NULL;
@@ -3170,7 +3132,6 @@ static void UseSurfEffect_5(struct Task *task)
         UnlockPlayerFieldControls();
         FieldEffectActiveListRemove(FLDEFF_USE_SURF);
         DestroyTask(FindTaskIdByFunc(Task_FldEffUseSurf));
-        SetHelpContext(HELPCONTEXT_SURFING);
     }
 }
 
@@ -3189,8 +3150,6 @@ static void (*const sUseVsSeekerEffectFuncs[])(struct Task *task) = {
 
 u32 FldEff_UseVsSeeker(void)
 {
-    if (gQuestLogState == QL_STATE_RECORDING)
-        QuestLogRecordPlayerAvatarGfxTransitionWithDuration(8, 89);
     CreateTask(Task_FldEffUseVsSeeker, 0xFF);
     return 0;
 }

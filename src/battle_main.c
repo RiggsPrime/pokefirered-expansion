@@ -29,7 +29,6 @@
 #include "field_weather.h"
 #include "follower_npc.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
 #include "item.h"
@@ -43,8 +42,6 @@
 #include "party_menu.h"
 #include "pokeball.h"
 #include "pokedex.h"
-#include "pokemon.h"
-#include "quest_log.h"
 #include "pokerus.h"
 #include "random.h"
 #include "recorded_battle.h"
@@ -504,24 +501,6 @@ void CB2_InitBattle(void)
     else
     {
         CB2_InitBattleInternal();
-        if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)))
-        {
-            if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-            {
-                if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-                    SetHelpContext(HELPCONTEXT_TRAINER_BATTLE_DOUBLE);
-                else
-                    SetHelpContext(HELPCONTEXT_TRAINER_BATTLE_SINGLE);
-            }
-            else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-            {
-                SetHelpContext(HELPCONTEXT_SAFARI_BATTLE);
-            }
-            else
-            {
-                SetHelpContext(HELPCONTEXT_WILD_BATTLE);
-            }
-        }
     }
 }
 
@@ -2418,7 +2397,6 @@ static void EndLinkBattleInSteps(void)
         {
             gMain.anyLinkBattlerHasFrontierPass = FALSE;
             SetMainCallback2(gMain.savedCallback);
-            TrySetQuestLogLinkBattleEvent();
             FreeBattleResources();
             FreeBattleSpritesData();
             FreeMonSpritesGfx();
@@ -5576,9 +5554,12 @@ static void HandleEndTurn_FinishBattle(void)
                         GetMonData(GetBattlerMon(battler), MON_DATA_NICKNAME, gBattleResults.playerMon2Name);
                     }
                 }
+                else if (!IsOnPlayerSide(battler))
+                {
+                    HandleSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[battler].species), FLAG_SET_SEEN, gBattleMons[battler].personality);
+                }
             }
         }
-        TrySetQuestLogBattleEvent();
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
             ClearRematchStateByTrainerId();
 

@@ -11,7 +11,6 @@
 #include "malloc.h"
 #include "menu.h"
 #include "palette.h"
-#include "quest_log.h"
 #include "sound.h"
 #include "sprite.h"
 #include "string_util.h"
@@ -1274,8 +1273,7 @@ void TextPrinterClearDownArrow(struct TextPrinter *textPrinter)
 
 bool32 TextPrinterWaitAutoMode(struct TextPrinter *textPrinter)
 {
-    u8 delay = (gQuestLogState == QL_STATE_PLAYBACK) ? 50 : 120;
-    if (textPrinter->autoScrollDelay == delay)
+    if (textPrinter->autoScrollDelay == 120)
     {
         textPrinter->autoScrollDelay = 0;
         return TRUE;

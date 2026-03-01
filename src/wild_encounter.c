@@ -12,7 +12,6 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "ow_synchronize.h"
-#include "quest_log.h"
 #include "random.h"
 #include "random.h"
 #include "roamer.h"
@@ -883,9 +882,6 @@ bool8 UpdateRepelCounter(void)
     if (InBattlePike() || CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE)
         return FALSE;
     if (InUnionRoom() == TRUE)
-        return FALSE;
-
-    if (gQuestLogState == QL_STATE_PLAYBACK)
         return FALSE;
 
     if (steps != 0)

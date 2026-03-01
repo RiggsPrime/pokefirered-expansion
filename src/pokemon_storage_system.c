@@ -9,7 +9,6 @@
 #include "field_fadetransition.h"
 #include "field_weather.h"
 #include "graphics.h"
-#include "help_system.h"
 #include "item.h"
 #include "item_icon.h"
 #include "item_menu.h"
@@ -22,12 +21,10 @@
 #include "pokemon_icon.h"
 #include "pokemon_storage_system.h"
 #include "pokemon_summary_screen.h"
-#include "quest_log.h"
 #include "strings.h"
 #include "task.h"
 #include "text_window.h"
 #include "trig.h"
-#include "constants/help_system.h"
 #include "constants/items.h"
 #include "constants/party_menu.h"
 #include "constants/pokemon_icon.h"
@@ -537,7 +534,6 @@ struct PokemonStorageSystemData
     struct PokeStorageItemIcon itemIcons[MAX_ITEM_ICONS];
     u16 movingItemId;
     u16 itemInfoWindowOffset;
-    struct QuestLogEvent_MovedBoxMon questLogData;
     u16 unusedField2;
     u16 displayMonPalOffset;
     u16 *displayMonTilePtr;
@@ -649,7 +645,6 @@ static void ClearBottomWindow(void);
 static void AddWallpaperSetsMenu(void);
 static void AddWallpapersMenu(u8 wallpaperSet);
 static void InitCursorItemIcon(void);
-static void SetPokeStorageQuestLogEvent(u8 species);
 static void UpdateBoxToSendMons(void);
 
 // Options menus
@@ -715,7 +710,6 @@ static bool8 IsMonBeingMoved(void);
 static void DoTrySetDisplayMonData(void);
 
 static bool8 CanMovePartyMon(void);
-static u8 GetMovingMonOriginalBoxId(void);
 
 // Moving multiple Pokémon at once
 static bool8 MultiMove_Init(void);
@@ -1449,7 +1443,6 @@ static void Task_PCMainMenu(u8 taskId)
     switch (task->tState)
     {
     case STATE_LOAD:
-        SetHelpContext(HELPCONTEXT_BILLS_PC);
         CreatePCMainMenu(task->tSelectedOption, &task->tWindowId);
         LoadMessageBoxAndBorderGfx();
         DrawDialogueFrame(0, FALSE);
@@ -1849,7 +1842,6 @@ void EnterPokeStorage(u8 boxOption)
         sMovingItemId = ITEM_NONE;
         gStorage->state = 0;
         gStorage->taskId = CreateTask(Task_InitPokeStorage, 3);
-        SetHelpContext(HELPCONTEXT_BILLS_PC);
         sLastUsedBox = StorageGetCurrentBox();
         SetMainCallback2(CB2_PokeStorage);
     }
@@ -1872,7 +1864,6 @@ void CB2_ReturnToPokeStorage(void)
         gStorage->isReopening = TRUE;
         gStorage->state = 0;
         gStorage->taskId = CreateTask(Task_InitPokeStorage, 3);
-        SetHelpContext(HELPCONTEXT_BILLS_PC);
         SetMainCallback2(CB2_PokeStorage);
     }
 }
@@ -2226,7 +2217,6 @@ static void Task_PokeStorageMain(u8 taskId)
             break;
         case INPUT_MULTIMOVE_PLACE_MONS:
             PlaySE(SE_SELECT);
-            SetPokeStorageQuestLogEvent(3);
             MultiMove_SetFunction(MULTIMOVE_PLACE_MONS);
             gStorage->state = 7;
             break;
@@ -2550,7 +2540,6 @@ static void Task_PlaceMon(u8 taskId)
     switch (gStorage->state)
     {
     case 0:
-        SetPokeStorageQuestLogEvent(1);
         InitMonPlaceChange(CHANGE_PLACE);
         gStorage->state++;
         break;
@@ -2571,7 +2560,6 @@ static void Task_ShiftMon(u8 taskId)
     switch (gStorage->state)
     {
     case 0:
-        SetPokeStorageQuestLogEvent(0);
         InitMonPlaceChange(CHANGE_SHIFT);
         gStorage->state++;
         break;
@@ -2620,7 +2608,6 @@ static void Task_WithdrawMon(u8 taskId)
     case 3:
         if (!DoShowPartyMenu())
         {
-            SetPokeStorageQuestLogEvent(1);
             InitMonPlaceChange(CHANGE_PLACE);
             gStorage->state++;
         }
@@ -2666,7 +2653,6 @@ static void Task_DepositMenu(u8 taskId)
             if (TryStorePartyMonInBox(boxId))
             {
                 sDepositBoxId = boxId;
-                SetPokeStorageQuestLogEvent(2);
                 ClearBottomWindow();
                 DestroyChooseBoxMenuSprites();
                 FreeBoxSelectionPopupSpriteGfx();
@@ -4141,97 +4127,6 @@ static void InitCursorItemIcon(void)
         InitItemIconInCursor(sMovingItemId);
         StartCursorAnim(CURSOR_ANIM_FIST);
     }
-}
-
-static void SetPokeStorageQuestLogEvent(u8 action)
-{
-    u16 event;
-    struct QuestLogEvent_MovedBoxMon *questLogData;
-    u8 box1 = GetMovingMonOriginalBoxId();
-    u16 species1 = gStorage->displayMonSpecies;
-    u16 species2;
-    u8 box2;
-    if (sInPartyMenu)
-    {
-        box2 = TOTAL_BOXES_COUNT;
-        species2 = GetMonData(&gPlayerParty[GetBoxCursorPosition()], MON_DATA_SPECIES_OR_EGG);
-    }
-    else
-    {
-        box2 = StorageGetCurrentBox();
-        species2 = GetCurrentBoxMonData(GetBoxCursorPosition(), MON_DATA_SPECIES_OR_EGG);
-    }
-    questLogData = &gStorage->questLogData;
-
-    switch (action)
-    {
-    default:
-        return;
-    case 0:
-        if (sInPartyMenu)
-        {
-            if (box1 == TOTAL_BOXES_COUNT)
-                return;
-            else
-                event = QL_EVENT_SWITCHED_PARTY_MON_FOR_PC_MON;
-        }
-        else
-        {
-            if (box1 == TOTAL_BOXES_COUNT)
-                // Should upmerge but doesn't
-                event = QL_EVENT_SWITCHED_PARTY_MON_FOR_PC_MON;
-            else
-                event = box1 != box2 ? QL_EVENT_SWITCHED_MONS_BETWEEN_BOXES : QL_EVENT_SWITCHED_MONS_WITHIN_BOX;
-        }
-        questLogData->species1 = species1;
-        questLogData->species2 = species2;
-        questLogData->box1 = box1;
-        questLogData->box2 = box2;
-        break;
-    case 1:
-        questLogData->species1 = species1;
-        questLogData->species2 = SPECIES_NONE;
-        questLogData->box1 = box1;
-        questLogData->box2 = 0xFF;
-        if (sInPartyMenu)
-        {
-            if (box1 == TOTAL_BOXES_COUNT)
-                return;
-            else
-                event = QL_EVENT_WITHDREW_MON_PC;
-        }
-        else
-        {
-            if (box1 == TOTAL_BOXES_COUNT)
-            {
-                event = QL_EVENT_DEPOSITED_MON_PC;
-                questLogData->box1 = box2;
-            }
-            else if (box1 != box2)
-            {
-                event = QL_EVENT_MOVED_MON_BETWEEN_BOXES;
-                questLogData->box2 = box2;
-            }
-            else
-                event = QL_EVENT_MOVED_MON_WITHIN_BOX;
-        }
-        break;
-    case 2:
-        event = QL_EVENT_DEPOSITED_MON_PC;
-        questLogData->species1 = species1;
-        questLogData->species2 = SPECIES_NONE;
-        questLogData->box1 = sDepositBoxId;
-        questLogData->box2 = 0xFF;
-        break;
-    case 3:
-        event = QL_EVENT_SWITCHED_MULTIPLE_MONS;
-        questLogData->species1 = SPECIES_NONE;
-        questLogData->species2 = SPECIES_NONE;
-        questLogData->box1 = box1;
-        questLogData->box2 = box2;
-        break;
-    }
-    SetQuestLogEvent(event, (const u16 *)questLogData);
 }
 
 static void UpdateBoxToSendMons(void)
@@ -7556,11 +7451,6 @@ void GetCursorBoxColumnAndRow(u8 *column, u8 *row)
 static void StartCursorAnim(u8 animNum)
 {
     StartSpriteAnim(gStorage->cursorSprite, animNum);
-}
-
-static u8 GetMovingMonOriginalBoxId(void)
-{
-    return sMovingMonOrigBoxId;
 }
 
 void SetCursorPriorityTo1(void)

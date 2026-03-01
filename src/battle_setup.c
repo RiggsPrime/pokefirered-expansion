@@ -57,8 +57,6 @@
 #include "constants/weather.h"
 #include "fishing.h"
 #include "wild_encounter.h"
-#include "help_system.h"
-#include "quest_log.h"
 
 enum TransitionType
 {
@@ -161,7 +159,6 @@ static void Task_BattleStart(u8 taskId)
     case 0:
         if (!FldEffPoison_IsActive()) // is poison not active?
         {
-            HelpSystem_Disable();
             BattleTransition_StartOnField(tTransition);
             // ClearMirageTowerPulseBlendEffect();
             tState++; // go to case 1.
@@ -170,7 +167,6 @@ static void Task_BattleStart(u8 taskId)
     case 1:
         if (IsBattleTransitionDone() == TRUE)
         {
-            HelpSystem_Enable();
             PrepareForFollowerNPCBattle();
             CleanupOverworldWindowsAndTilemaps();
             SetMainCallback2(CB2_InitBattle);
@@ -199,7 +195,6 @@ static void Task_BattleStart_Debug(u8 taskId)
     case 0:
         if (!FldEffPoison_IsActive()) // is poison not active?
         {
-            HelpSystem_Disable();
             BattleTransition_StartOnField(tTransition);
             // ClearMirageTowerPulseBlendEffect();
             tState++; // go to case 1.
@@ -208,7 +203,6 @@ static void Task_BattleStart_Debug(u8 taskId)
     case 1:
         if (IsBattleTransitionDone() == TRUE)
         {
-            HelpSystem_Enable();
             CleanupOverworldWindowsAndTilemaps();
             SetMainCallback2(CB2_InitBattle);
             RestartWildEncounterImmunitySteps();
@@ -998,12 +992,10 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
         return EventScript_TryDoDoubleTrainerBattle;
 #if FREE_MATCH_CALL == FALSE
     case TRAINER_BATTLE_REMATCH_DOUBLE:
-        QL_FinishRecordingScene();
         SetMapVarsToTrainerA();
         TRAINER_BATTLE_PARAM.opponentA = GetRematchTrainerId(TRAINER_BATTLE_PARAM.opponentA);
         return EventScript_TryDoDoubleRematchBattle;
     case TRAINER_BATTLE_REMATCH:
-        QL_FinishRecordingScene();
         SetMapVarsToTrainerA();
         TRAINER_BATTLE_PARAM.opponentA = GetRematchTrainerId(TRAINER_BATTLE_PARAM.opponentA);
         return EventScript_TryDoRematchBattle;
@@ -1290,7 +1282,6 @@ static void CB2_EndTrainerBattle(void)
         DowngradeBadPoison();
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
         SetBattledTrainerFlag();
-        QuestLogEvents_HandleEndTrainerBattle();
     }
     else if (TRAINER_BATTLE_PARAM.opponentA == TRAINER_SECRET_BASE)
     {
@@ -1315,7 +1306,6 @@ static void CB2_EndTrainerBattle(void)
         if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
         {
             SetBattledTrainersFlags();
-            QuestLogEvents_HandleEndTrainerBattle();
         }
     }
 }
@@ -1338,7 +1328,6 @@ static void CB2_EndRematchBattle(void)
         SetBattledTrainersFlags();
         // HandleRematchVarsOnBattleEnd();
         ClearRematchStateOfLastTalked();
-        ResetDeferredLinkEvent();
         DowngradeBadPoison();
     }
 }
@@ -1427,8 +1416,7 @@ void PlayTrainerEncounterMusic(void)
     else
         trainerId = TRAINER_BATTLE_PARAM.opponentB;
 
-    if (!QL_IS_PLAYBACK_STATE
-     && TRAINER_BATTLE_PARAM.mode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
+    if (TRAINER_BATTLE_PARAM.mode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
      && TRAINER_BATTLE_PARAM.mode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
     {
         switch (GetTrainerEncounterMusicId(trainerId))
