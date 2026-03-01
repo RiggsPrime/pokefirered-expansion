@@ -1135,6 +1135,7 @@ bool32 CannotUseItemsInBattle(u16 itemId, struct Pokemon *mon)
         }
         break;
     case EFFECT_ITEM_INCREASE_ALL_STATS:
+    {
         u32 ability = GetBattlerAbility(gBattlerInMenuId);
         for (i = STAT_ATK; i < NUM_STATS; i++)
         {
@@ -1144,6 +1145,7 @@ bool32 CannotUseItemsInBattle(u16 itemId, struct Pokemon *mon)
                 break;
             }
         }
+    }
         break;
     case EFFECT_ITEM_RESTORE_HP:
         if (hp == 0 || hp == GetMonData(mon, MON_DATA_MAX_HP))

@@ -1504,6 +1504,7 @@ static u16 DexScreen_CountMonsInOrderedList(u8 orderIdx)
         }
         break;
     case DEX_ORDER_NUMERICAL_NATIONAL:
+    {
         u32 species;
         for (i = SPECIES_BULBASAUR; i < NUM_SPECIES; i++)
         {
@@ -1538,7 +1539,9 @@ static u16 DexScreen_CountMonsInOrderedList(u8 orderIdx)
             if (!sPokedexScreenData->listItems[i].id)
                 sPokedexScreenData->listItems[i].name = gText_5Dashes;
         }
+    }
         break;
+        
     }
     return seenCount;
 }
