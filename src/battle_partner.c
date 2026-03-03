@@ -14,6 +14,7 @@
 #include "task.h"
 #include "text.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_ai.h"
 
 #include "data/partner_parties.h"

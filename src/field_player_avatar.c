@@ -19,6 +19,7 @@
 #include "strings.h"
 #include "wild_encounter.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
 #include "constants/songs.h"

@@ -21,6 +21,7 @@
 #include "wild_encounter.h"
 #include "constants/maps.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/item.h"
 #include "constants/items.h"
 #include "constants/layouts.h"

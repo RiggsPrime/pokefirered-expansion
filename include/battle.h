@@ -5,6 +5,7 @@
 #include "constants/battle_end_turn.h"
 #include "constants/battle_switch_in.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle.h"
 #include "constants/battle_move_resolution.h"
 #include "constants/form_change_types.h"
@@ -168,6 +169,7 @@ struct FieldTimer
 struct AI_SavedBattleMon
 {
     enum Ability ability;
+    enum Aspect aspect;
     enum Move moves[MAX_MON_MOVES];
     u16 heldItem;
     u16 species:15;
@@ -181,6 +183,7 @@ struct AiPartyMon
     enum Item item;
     enum HoldEffect heldEffect;
     enum Ability ability;
+    enum Aspect aspect;
     u16 level;
     enum Move moves[MAX_MON_MOVES];
     u32 status;
@@ -208,6 +211,7 @@ struct SimulatedDamage
 struct AiLogicData
 {
     enum Ability abilities[MAX_BATTLERS_COUNT];
+    enum Aspect aspects[MAX_BATTLERS_COUNT];
     enum Item items[MAX_BATTLERS_COUNT];
     enum HoldEffect holdEffects[MAX_BATTLERS_COUNT];
     u8 holdEffectParams[MAX_BATTLERS_COUNT];
@@ -255,6 +259,7 @@ struct AiThinkingStruct
 struct BattleHistory
 {
     enum Ability abilities[MAX_BATTLERS_COUNT];
+    enum Aspect aspects[MAX_BATTLERS_COUNT];
     u8 itemEffects[MAX_BATTLERS_COUNT];
     u16 usedMoves[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
     u16 moveHistory[MAX_BATTLERS_COUNT][AI_MOVE_HISTORY_COUNT]; // 3 last used moves for each battler
@@ -983,6 +988,7 @@ extern u16 gCalledMove;
 extern s32 gBideDmg[MAX_BATTLERS_COUNT];
 extern u16 gLastUsedItem;
 extern enum Ability gLastUsedAbility;
+extern enum Aspect gLastUsedAspect;
 extern enum BattlerId gBattlerAttacker;
 extern enum BattlerId gBattlerTarget;
 extern enum BattlerId gBattlerFainted;

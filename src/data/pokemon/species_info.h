@@ -1,4 +1,5 @@
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/teaching_types.h"
 #include "species_info/shared_dex_text.h"
 #include "species_info/shared_front_pic_anims.h"
@@ -197,6 +198,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .growthRate = GROWTH_MEDIUM_FAST,
         .eggGroups = MON_EGG_GROUPS(EGG_GROUP_NO_EGGS_DISCOVERED),
         .abilities = { ABILITY_NONE, ABILITY_CURSED_BODY, ABILITY_DAMP },
+        .aspect = ASPECT_NONE,
         .bodyColor = BODY_COLOR_BLACK,
         .speciesName = _("??????????"),
         .cryId = CRY_NONE,

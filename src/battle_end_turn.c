@@ -10,6 +10,7 @@
 #include "constants/battle.h"
 #include "constants/battle_string_ids.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/items.h"
 #include "constants/moves.h"
 
@@ -474,6 +475,7 @@ static bool32 HandleEndTurnPoison(enum BattlerId battler)
     bool32 effect = FALSE;
 
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     gBattleStruct->eventState.endTurnBattler++;
 
@@ -515,6 +517,7 @@ static bool32 HandleEndTurnBurn(enum BattlerId battler)
     bool32 effect = FALSE;
 
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     gBattleStruct->eventState.endTurnBattler++;
 
@@ -859,6 +862,7 @@ static bool32 HandleEndTurnYawn(enum BattlerId battler)
     bool32 effect = FALSE;
 
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     gBattleStruct->eventState.endTurnBattler++;
 

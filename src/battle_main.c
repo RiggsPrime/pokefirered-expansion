@@ -65,6 +65,7 @@
 #include "wild_encounter.h"
 #include "window.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_ai.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
@@ -172,6 +173,7 @@ EWRAM_DATA u16 gCalledMove = 0;
 EWRAM_DATA s32 gBideDmg[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastUsedItem = 0;
 EWRAM_DATA enum Ability gLastUsedAbility = 0;
+EWRAM_DATA enum Aspect gLastUsedAspect = 0;
 EWRAM_DATA enum BattlerId gBattlerAttacker = 0;
 EWRAM_DATA enum BattlerId gBattlerTarget = 0;
 EWRAM_DATA enum BattlerId gBattlerFainted = 0;
@@ -3512,6 +3514,7 @@ static void DoBattleIntro(void)
                 gBattleMons[battler].types[1] = GetSpeciesType(gBattleMons[battler].species, 1);
                 gBattleMons[battler].types[2] = TYPE_MYSTERY;
                 gBattleMons[battler].ability = GetAbilityBySpecies(gBattleMons[battler].species, gBattleMons[battler].abilityNum);
+                gBattleMons[battler].aspect = GetAspectBySpecies(gBattleMons[battler].species);
                 gBattleStruct->battlerState[battler].hpOnSwitchout = gBattleMons[battler].hp;
                 memset(&gBattleMons[battler].volatiles, 0, sizeof(struct Volatiles));
                 for (i = 0; i < NUM_BATTLE_STATS; i++)
@@ -5243,6 +5246,8 @@ static void TryChangingTurnOrderEffects(struct BattleCalcValues *calcValues, u32
     enum BattlerId battler2 = calcValues->battlerDef;
     enum Ability ability1 = calcValues->abilities[calcValues->battlerAtk];
     enum Ability ability2 = calcValues->abilities[calcValues->battlerDef];
+    enum Aspect aspect1 = calcValues->aspects[calcValues->battlerAtk];
+    enum Aspect aspect2 = calcValues->aspects[calcValues->battlerDef];
     enum HoldEffect holdEffectBattler1 = calcValues->holdEffects[calcValues->battlerAtk];
     enum HoldEffect holdEffectBattler2 = calcValues->holdEffects[calcValues->battlerDef];
 
@@ -5832,6 +5837,7 @@ enum Type GetDynamicMoveType(struct Pokemon *mon, enum Move move, enum BattlerId
     u32 species, heldItem;
     enum Type type1, type2, type3;
     enum Ability ability;
+    enum Aspect aspect;
     enum HoldEffect holdEffect;
     enum Gimmick gimmick = GetActiveGimmick(battler);
 

@@ -39,6 +39,7 @@
 #include "constants/moves.h"
 #include "constants/trainers.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/songs.h"
 #include "constants/battle_frontier.h"
 #include "constants/rgb.h"

@@ -39,6 +39,7 @@
 #include "constants/battle_string_ids.h"
 #include "constants/battle_move_effects.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/moves.h"
 
 #define STAT_STAGE(battler, stat) (gBattleMons[battler].statStages[stat - 1])

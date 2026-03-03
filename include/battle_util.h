@@ -120,6 +120,8 @@ struct BattleContext
     uq4_12_t typeEffectivenessModifier;
     enum Ability abilityAtk;
     enum Ability abilityDef;
+    enum Aspect aspectAtk;
+    enum Aspect aspectDef;
     enum HoldEffect holdEffectAtk;
     enum HoldEffect holdEffectDef;
 
@@ -145,6 +147,7 @@ struct BattleCalcValues
     enum Move move:16;
     u32 padding:10;
     enum Ability abilities[MAX_BATTLERS_COUNT];
+    enum Aspect aspects[MAX_BATTLERS_COUNT];
     enum HoldEffect holdEffects[MAX_BATTLERS_COUNT];
 };
 
@@ -235,7 +238,9 @@ bool32 IsMoldBreakerTypeAbility(enum BattlerId battler, enum Ability ability);
 enum Ability GetBattlerAbilityIgnoreMoldBreaker(enum BattlerId battler);
 enum Ability GetBattlerAbilityNoAbilityShield(enum BattlerId battler);
 enum Ability GetBattlerAbilityInternal(enum BattlerId battler, bool32 ignoreMoldBreaker, bool32 noAbilityShield);
+enum Aspect GetBattlerAspectInternal(enum BattlerId battler);
 enum Ability GetBattlerAbility(enum BattlerId battler);
+enum Aspect GetBattlerAspect(enum BattlerId battler);
 u32 IsAbilityOnSide(enum BattlerId battler, enum Ability ability);
 u32 IsAbilityOnOpposingSide(enum BattlerId battler, enum Ability ability);
 u32 IsAbilityOnField(enum Ability ability);

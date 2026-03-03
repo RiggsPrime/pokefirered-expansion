@@ -7,6 +7,7 @@
 #include "data.h"
 #include "graphics.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_ai.h"
 #include "constants/items.h"
 #include "constants/moves.h"

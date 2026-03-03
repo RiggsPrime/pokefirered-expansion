@@ -8,6 +8,7 @@
 #include "party_menu.h"
 #include "event_data.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "random.h"
 #include "battle_scripts.h"
 #include "constants/battle_string_ids.h"

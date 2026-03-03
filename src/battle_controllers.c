@@ -30,6 +30,7 @@
 #include "util.h"
 #include "wild_encounter.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/item_effects.h"
 #include "constants/songs.h"
 #include "test/battle.h"
@@ -1484,6 +1485,7 @@ static u32 GetBattlerMonData(enum BattlerId battler, struct Pokemon *party, u32 
         battleMon.spAttack = GetMonData(&party[monId], MON_DATA_SPATK);
         battleMon.spDefense = GetMonData(&party[monId], MON_DATA_SPDEF);
         battleMon.abilityNum = GetMonData(&party[monId], MON_DATA_ABILITY_NUM);
+        battleMon.aspectNum = GetMonData(&party[monId], MON_DATA_ASPECT_NUM);
         battleMon.otId = GetMonData(&party[monId], MON_DATA_OT_ID);
         battleMon.metLevel = GetMonData(&party[monId], MON_DATA_MET_LEVEL);
         battleMon.isShiny = GetMonData(&party[monId], MON_DATA_IS_SHINY);

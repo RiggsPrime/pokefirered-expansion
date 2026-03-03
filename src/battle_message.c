@@ -21,6 +21,7 @@
 #include "test_runner.h"
 #include "trainer_tower.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_dome.h"
 #include "constants/battle_string_ids.h"
 #include "constants/frontier_util.h"

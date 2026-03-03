@@ -18,6 +18,7 @@
 #include "recorded_battle.h"
 #include "util.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_ai.h"
 #include "constants/battle_move_effects.h"
 #include "constants/moves.h"
@@ -425,7 +426,7 @@ void SetBattlerData(enum BattlerId battlerId)
         // The ability is unknown.
         else
             gBattleMons[battlerId].ability = ABILITY_NONE;
-
+        gBattleMons[battlerId].aspect = GetSpeciesAspect(species);
         if (gAiPartyData->mons[side][gBattlerPartyIndexes[battlerId]].heldEffect == 0)
             gBattleMons[battlerId].item = 0;
 
@@ -634,6 +635,8 @@ bool32 IsDamageMoveUnusable(struct BattleContext *ctx)
 {
     enum Ability battlerDefAbility;
     enum Ability partnerDefAbility;
+    enum Aspect battlerDefAspect;
+    enum Aspect partnerDefAspect;
     struct AiLogicData *aiData = gAiLogicData;
 
     if (ctx->typeEffectivenessModifier == UQ_4_12(0.0))
@@ -1023,6 +1026,7 @@ struct SimulatedDamage AI_CalcDamage(enum Move move, enum BattlerId battlerAtk, 
 bool32 AI_IsDamagedByRecoil(enum BattlerId battler)
 {
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     if (ability == ABILITY_MAGIC_GUARD || ability == ABILITY_ROCK_HEAD)
         return FALSE;
     return TRUE;
@@ -1033,6 +1037,8 @@ static bool32 AI_IsMoveEffectInPlus(enum BattlerId battlerAtk, enum BattlerId ba
 {
     enum Ability abilityDef = gAiLogicData->abilities[battlerDef];
     enum Ability abilityAtk = gAiLogicData->abilities[battlerAtk];
+    enum Aspect aspectDef = gAiLogicData->aspects[battlerDef];
+    enum Aspect aspectAtk = gAiLogicData->aspects[battlerAtk];
     enum Move predictedMoveSpeedCheck = GetIncomingMoveSpeedCheck(battlerAtk, battlerDef, gAiLogicData);
     bool32 aiIsFaster = AI_IsFaster(battlerAtk, battlerDef, move, predictedMoveSpeedCheck, CONSIDER_PRIORITY);
 
@@ -1217,6 +1223,8 @@ static bool32 AI_IsMoveEffectInMinus(enum BattlerId battlerAtk, enum BattlerId b
 {
     enum Ability abilityAtk = gAiLogicData->abilities[battlerAtk];
     enum Ability abilityDef = gAiLogicData->abilities[battlerDef];
+    enum Aspect aspectDef = gAiLogicData->aspects[battlerDef];
+    enum Aspect aspectAtk = gAiLogicData->aspects[battlerAtk];
 
     if (GetMoveStrikeCount(move) > 1 || IsMultiHitMove(move))
     {
@@ -1323,6 +1331,8 @@ enum MoveComparisonResult CompareMoveEffects(enum Move move1, enum Move move2, e
     bool32 effect1, effect2;
     enum Ability defAbility = gAiLogicData->abilities[battlerDef];
     enum Ability atkAbility = gAiLogicData->abilities[battlerAtk];
+    enum Aspect aspectDef = gAiLogicData->aspects[battlerDef];
+    enum Aspect aspectAtk = gAiLogicData->aspects[battlerAtk];
 
     // Check if physical moves hurt.
     if (gAiLogicData->holdEffects[battlerAtk] != HOLD_EFFECT_PROTECTIVE_PADS && atkAbility != ABILITY_LONG_REACH
@@ -1450,6 +1460,9 @@ s32 AI_WhoStrikesFirst(enum BattlerId battlerAI, enum BattlerId battler, enum Mo
     enum HoldEffect holdEffectPlayer = gAiLogicData->holdEffects[battler];
     enum Ability abilityAI = gAiLogicData->abilities[battlerAI];
     enum Ability abilityPlayer = gAiLogicData->abilities[battler];
+    enum Aspect aspectAI = gAiLogicData->aspects[battlerAI];
+    enum Aspect aspectPlayer = gAiLogicData->aspects[battler];
+
 
     if (considerPriority == CONSIDER_PRIORITY)
     {
@@ -1909,6 +1922,7 @@ u32 AI_GetWeather(void)
 u32 AI_GetSwitchinWeather(enum BattlerId battler)
 {
     enum Ability ability = gBattleMons[battler].ability;
+    enum Aspect aspect = gBattleMons[battler].aspect;
     // Forced weather behaviour
     if (!AI_WeatherHasEffect())
         return B_WEATHER_NONE;
@@ -1951,6 +1965,7 @@ u32 SwitchinChangeBattleTerrain(u32 newTerrain, u32 fieldStatus)
 u32 AI_GetSwitchinFieldStatus(enum BattlerId battler)
 {
     enum Ability ability = gBattleMons[battler].ability;
+    enum Aspect aspect = gBattleMons[battler].aspect;
     u32 startingFieldStatus = gFieldStatuses;
     // Switchin will introduce new terrain
     switch(ability)
@@ -2330,6 +2345,7 @@ bool32 CanLowerStat(enum BattlerId battlerAtk, enum BattlerId battlerDef, struct
 
     enum Move move = gAiThinkingStruct->moveConsidered;
     enum Ability abilityAtk = aiData->abilities[battlerAtk];
+    enum Aspect aspectAtk = aiData->aspects[battlerAtk];
 
     if (gSideStatuses[GetBattlerSide(battlerDef)] & SIDE_STATUS_MIST && abilityAtk != ABILITY_INFILTRATOR)
         return FALSE;
@@ -3369,6 +3385,7 @@ static bool32 BattlerAffectedByHail(enum BattlerId battlerId, enum Ability abili
 static u32 GetWeatherDamage(enum BattlerId battlerId)
 {
     enum Ability ability = gAiLogicData->abilities[battlerId];
+    enum Aspect aspect = gAiLogicData->aspects[battlerId];
     enum HoldEffect holdEffect = gAiLogicData->holdEffects[battlerId];
     u32 damage = 0;
     u32 weather = AI_GetWeather();
@@ -3466,6 +3483,7 @@ bool32 AnyUsefulStatIsRaised(enum BattlerId battler)
 bool32 BattlerHasMaxHPProtection(enum BattlerId battler)
 {
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     if (!AI_BattlerAtMaxHp(battler))
         return FALSE;
     if (gAiLogicData->holdEffects[battler] == HOLD_EFFECT_FOCUS_SASH)
@@ -3569,6 +3587,7 @@ static inline bool32 DoesBattlerBenefitFromAllVolatileStatus(enum BattlerId batt
 bool32 ShouldPoison(enum BattlerId battlerAtk, enum BattlerId battlerDef)
 {
     enum Ability abilityDef = gAiLogicData->abilities[battlerDef];
+    enum Aspect aspectDef = gAiLogicData->aspects[battlerDef];
     // Battler can be poisoned and has move/ability that synergizes with being poisoned
     if (CanBePoisoned(battlerAtk, battlerDef, gAiLogicData->abilities[battlerAtk], abilityDef) && (
         DoesBattlerBenefitFromAllVolatileStatus(battlerDef, abilityDef)
@@ -3813,6 +3832,7 @@ bool32 IsFlinchGuaranteed(enum BattlerId battlerAtk, enum BattlerId battlerDef, 
 bool32 HasChoiceEffect(enum BattlerId battler)
 {
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     if (ability == ABILITY_GORILLA_TACTICS)
         return TRUE;
 
@@ -5716,6 +5736,7 @@ bool32 AI_ShouldSpicyExtract(enum BattlerId battlerAtk, enum BattlerId battlerAt
 {
     bool32 preventsStatLoss;
     enum Ability partnerAbility = aiData->abilities[battlerAtkPartner];
+    enum Aspect partnerAspect = aiData->aspects[battlerAtkPartner];
     enum BattlerPosition opposingPosition = BATTLE_OPPOSITE(GetBattlerPosition(battlerAtk));
     enum BattlerId opposingBattler = GetBattlerAtPosition(opposingPosition);
 

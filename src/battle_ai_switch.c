@@ -16,6 +16,7 @@
 #include "random.h"
 #include "util.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/item_effects.h"
 #include "constants/battle_move_effects.h"
 #include "constants/items.h"
@@ -270,6 +271,7 @@ static bool32 ShouldSwitchIfHasBadOdds(enum BattlerId battler)
     enum Move *playerMoves = GetMovesArray(opposingBattler);
     enum Move aiMove, playerMove, bestPlayerPriorityMove = MOVE_NONE, bestPlayerMove = MOVE_NONE, expectedMove = MOVE_NONE;
     enum Ability aiAbility = gAiLogicData->abilities[battler];
+    enum Aspect aiAspect = gAiLogicData->aspects[battler];
     bool32 hasStatusMove = FALSE, hasSuperEffectiveMove = FALSE;
     u32 typeMatchup;
     enum BattleMoveEffects aiMoveEffect;
@@ -550,10 +552,12 @@ static bool32 FindMonThatAbsorbsOpponentsMove(enum BattlerId battler)
     enum BattlerId battlerIn1, battlerIn2;
     u8 numAbsorbingAbilities = 0;
     enum Ability absorbingTypeAbilities[8]; // Max needed for type + move property absorbers
+    enum Aspect absorbingTypeAspects[8];
     s32 firstId;
     s32 lastId;
     struct Pokemon *party;
     enum Ability monAbility;
+    enum Aspect monAspect;
     enum Move aiMove;
     enum BattlerId opposingBattler = GetOppositeBattler(battler);
     enum Move incomingMove = GetIncomingMove(battler, opposingBattler, gAiLogicData);
@@ -700,6 +704,7 @@ static bool32 ShouldSwitchIfTrapperInParty(enum BattlerId battler)
     s32 lastId;
     struct Pokemon *party;
     enum Ability monAbility;
+    enum Aspect monAspect;
     s32 opposingBattler =  GetOppositeBattler(battler);
 
     // Only use this if AI_FLAG_SMART_SWITCHING is set for the trainer
@@ -735,6 +740,7 @@ static bool32 ShouldSwitchIfBadlyStatused(enum BattlerId battler)
 {
     bool32 switchMon = FALSE;
     enum Ability monAbility = gAiLogicData->abilities[battler];
+    enum Aspect monAspect = gAiLogicData->aspects[battler];
     enum HoldEffect holdEffect = gAiLogicData->holdEffects[battler];
     enum BattlerPosition opposingPosition = BATTLE_OPPOSITE(GetBattlerPosition(battler));
     enum BattlerId opposingBattler = GetBattlerAtPosition(opposingPosition);
@@ -1034,6 +1040,7 @@ static bool32 FindMonWithFlagsAndSuperEffective(enum BattlerId battler, u16 flag
     {
         u16 species;
         enum Ability monAbility;
+        enum Aspect monAspect;
         uq4_12_t typeMultiplier;
         u16 moveFlags = 0;
 
@@ -1072,6 +1079,7 @@ static bool32 CanMonSurviveHazardSwitchin(enum BattlerId battler)
     enum BattlerId battlerIn1, battlerIn2;
     u32 hazardDamage = 0, battlerHp = gBattleMons[battler].hp;
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     enum Move aiMove;
     s32 firstId, lastId;
     struct Pokemon *party;
@@ -1484,6 +1492,7 @@ static u32 GetSwitchinHazardsDamage(enum BattlerId battler)
     enum HoldEffect heldItemEffect = gAiLogicData->holdEffects[battler];
     u32 maxHP = gBattleMons[battler].maxHP;
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     u32 status = gBattleMons[battler].status1;
     u32 spikesDamage = 0, tSpikesDamage = 0, hazardDamage = 0;
     enum BattleSide side = GetBattlerSide(battler);
@@ -1541,6 +1550,7 @@ static s32 GetSwitchinWeatherImpact(enum BattlerId battler)
 {
     s32 weatherImpact = 0, maxHP = gBattleMons[battler].maxHP;
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     enum HoldEffect holdEffect = gAiLogicData->holdEffects[battler];
 
     if (HasWeatherEffect())
@@ -1604,6 +1614,7 @@ static u32 GetSwitchinRecurringHealing(enum BattlerId battler)
 {
     u32 recurringHealing = 0, maxHP = gBattleMons[battler].maxHP;
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     enum HoldEffect holdEffect = gAiLogicData->holdEffects[battler];
 
     // Items
@@ -1639,6 +1650,7 @@ static u32 GetSwitchinRecurringDamage(enum BattlerId battler)
 {
     u32 passiveDamage = 0, maxHP = gBattleMons[battler].maxHP;
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     enum HoldEffect holdEffect = gAiLogicData->holdEffects[battler];
 
     // Items
@@ -1673,6 +1685,7 @@ static u32 GetSwitchinStatusDamage(enum BattlerId battler)
     enum HoldEffect heldItemEffect = gAiLogicData->holdEffects[battler];
     u32 status = gBattleMons[battler].status1;
     enum Ability ability = gAiLogicData->abilities[battler];
+    enum Aspect aspect = gAiLogicData->aspects[battler];
     u32 maxHP = gBattleMons[battler].maxHP;
     u32 statusDamage = 0;
 
@@ -1769,6 +1782,7 @@ static u32 GetSwitchinHitsToKO(s32 damageTaken, enum BattlerId battler, const st
     u8 weatherDuration = gBattleStruct->weatherDuration, holdEffectParam = GetItemHoldEffectParam(item);
     enum BattlerId opposingBattler = GetOppositeBattler(battler);
     enum Ability opposingAbility = gAiLogicData->abilities[opposingBattler], ability = gAiLogicData->abilities[battler];
+    enum Aspect opposingAspect = gAiLogicData->aspects[opposingBattler], aspect = gAiLogicData->aspects[battler];
     bool32 usedSingleUseHealingItem = FALSE, opponentCanBreakMold = IsMoldBreakerTypeAbility(opposingBattler, opposingAbility);
     s32 currentHP = startingHP, singleUseItemHeal = 0;
     bool32 applyWishNow = healInfo->healEndOfTurn && healInfo->wishCounter == 1;

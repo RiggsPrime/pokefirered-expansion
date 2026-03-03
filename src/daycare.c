@@ -32,6 +32,7 @@
 #include "text.h"
 #include "trade.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/daycare.h"
 #include "constants/hold_effects.h"
 #include "constants/region_map_sections.h"

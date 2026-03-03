@@ -29,6 +29,7 @@
 #include "trig.h"
 #include "wild_encounter.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/maps.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"

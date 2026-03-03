@@ -66,6 +66,7 @@ struct TrainerMon
     u16 species;
     u16 heldItem;
     enum Ability ability;
+    enum Aspect aspect;
     u8 lvl;
     u8 ball;
     u8 friendship;

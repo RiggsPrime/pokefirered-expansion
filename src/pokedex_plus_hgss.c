@@ -45,6 +45,7 @@
 #include "trig.h"
 #include "window.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/form_change_types.h"
 #include "constants/items.h"
 #include "constants/moves.h"

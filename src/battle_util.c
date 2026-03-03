@@ -40,6 +40,7 @@
 #include "mail.h"
 #include "field_weather.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_anim.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_script_commands.h"
@@ -5107,6 +5108,16 @@ u32 IsAbilityPreventingEscape(enum BattlerId battler)
     return 0;
 }
 
+enum Aspect GetBattlerAspect(enum BattlerId battler)
+{
+    return GetBattlerAspectInternal(battler);
+}
+
+enum Aspect GetBattlerAspectInternal(enum BattlerId battler)
+{
+    return gBattleMons[battler].aspect;
+}
+
 bool32 CanBattlerEscape(enum BattlerId battler) // no ability check
 {
     if (gBattleStruct->battlerState[battler].commanderSpecies != SPECIES_NONE)
@@ -6795,6 +6806,16 @@ static inline u32 CalcMoveBasePowerAfterModifiers(struct BattleContext *ctx)
         }
     }
 
+    // attacker's aspects
+    switch (ctx->aspectAtk)
+    {
+    case ASPECT_TEST:
+        modifier = uq4_12_multiply(modifier, UQ_4_12(10.0));
+        break;
+    default:
+        break;
+    }
+
     // target's abilities
     switch (ctx->abilityDef)
     {
@@ -8235,6 +8256,8 @@ s32 CalculateMoveDamage(struct BattleContext *ctx)
 
     ctx->abilityAtk = GetBattlerAbility(ctx->battlerAtk);
     ctx->abilityDef = GetBattlerAbility(ctx->battlerDef);
+    ctx->aspectAtk = GetBattlerAspect(ctx->battlerAtk);
+    ctx->aspectDef = GetBattlerAspect(ctx->battlerDef);
     ctx->holdEffectAtk = GetBattlerHoldEffect(ctx->battlerAtk);
     ctx->holdEffectDef = GetBattlerHoldEffect(ctx->battlerDef);
 
@@ -9588,6 +9611,7 @@ void CopyMonLevelAndBaseStatsToBattleMon(enum BattlerId battler, struct Pokemon 
 void CopyMonAbilityAndTypesToBattleMon(enum BattlerId battler, struct Pokemon *mon)
 {
     gBattleMons[battler].ability = GetMonAbility(mon);
+    gBattleMons[battler].aspect = GetMonAspect(mon);
     #if TESTING
     if (gTestRunnerEnabled)
     {

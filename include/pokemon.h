@@ -15,6 +15,7 @@
 #include "constants/map_groups.h"
 #include "constants/battle.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "contest_effect.h"
 #include "constants/trainers.h"
 
@@ -79,6 +80,7 @@ enum MonData {
     MON_DATA_SPDEF_IV,
     MON_DATA_IS_EGG,
     MON_DATA_ABILITY_NUM,
+    MON_DATA_ASPECT_NUM,
     MON_DATA_TOUGH,
     MON_DATA_SHEEN,
     MON_DATA_OT_GENDER,
@@ -377,8 +379,10 @@ struct BattlePokemon
     /*0x16*/ u32 spAttackIV:5;
     /*0x17*/ u32 spDefenseIV:5;
     /*0x17*/ u32 abilityNum:2;
+    /*0x17*/ u32 aspectNum:1;
     /*0x18*/ s8 statStages[NUM_BATTLE_STATS];
     /*0x20*/ enum Ability ability;
+    /*0x20*/ enum Aspect aspect;
     /*0x22*/ enum Type types[3];
     /*0x25*/ u8 pp[MAX_MON_MOVES];
     /*0x29*/ u16 hp;
@@ -441,6 +445,7 @@ struct SpeciesInfo /*0xC4*/
     u8 growthRate;
     u8 eggGroups[2];
     enum Ability abilities[NUM_ABILITY_SLOTS]; // 3 abilities, no longer u8 because we have over 255 abilities now.
+    enum Aspect aspect; 
     u8 safariZoneFleeRate;
 
     // Pokédex data
@@ -569,6 +574,13 @@ struct AbilityInfo
     u8 cantBeOverwritten:1; // cannot be overwritten by Entrainment, Worry Seed or Simple Beam (but can be by Mummy) - same as cantBeSuppressed except for Truant
     u8 breakable:1; // can be bypassed by Mold Breaker and clones
     u8 failsOnImposter:1; // doesn't work on an Imposter mon; when can we actually use this?
+};
+
+struct AspectInfo
+{
+    u8 name[ASPECT_NAME_LENGTH + 1];
+    const u8 *description;
+    s8 aiRating;
 };
 
 enum {
@@ -750,6 +762,7 @@ extern const u16 gUnionRoomFacilityClasses[];
 extern const struct SpriteTemplate gBattlerSpriteTemplates[];
 extern const u32 sExpCandyExperienceTable[];
 extern const struct AbilityInfo gAbilitiesInfo[];
+extern const struct AspectInfo gAspectsInfo[];
 extern const struct NatureInfo gNaturesInfo[];
 
 void ZeroBoxMonData(struct BoxPokemon *boxMon);
@@ -824,7 +837,9 @@ u8 CalculateEnemyPartyCountInSide(enum BattlerId battler);
 u8 GetMonsStateToDoubles(void);
 u8 GetMonsStateToDoubles_2(void);
 enum Ability GetAbilityBySpecies(u16 species, u8 abilityNum);
+enum Aspect GetAspectBySpecies(u16 species);
 enum Ability GetMonAbility(struct Pokemon *mon);
+enum Aspect GetMonAspect(struct Pokemon *mon);
 void CreateSecretBaseEnemyParty(struct SecretBase *secretBaseRecord);
 enum TrainerPicID GetSecretBaseTrainerPicIndex(void);
 enum TrainerClassID GetSecretBaseTrainerClass(void);
@@ -837,6 +852,7 @@ u32 GetSpeciesHeight(u16 species);
 u32 GetSpeciesWeight(u16 species);
 enum Type GetSpeciesType(u16 species, u8 slot);
 enum Ability GetSpeciesAbility(u16 species, u8 slot);
+enum Aspect GetSpeciesAspect(u16 species);
 u32 GetSpeciesBaseHP(u16 species);
 u32 GetSpeciesBaseAttack(u16 species);
 u32 GetSpeciesBaseDefense(u16 species);

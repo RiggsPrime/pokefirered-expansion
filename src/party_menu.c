@@ -62,6 +62,7 @@
 #include "union_room.h"
 #include "pokerus.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle.h"
 #include "constants/battle_frontier.h"
 #include "constants/easy_chat.h"

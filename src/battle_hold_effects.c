@@ -127,6 +127,7 @@ static enum ItemEffect TryTerrainSeeds(u32 battler, enum Item item)
 static bool32 CanBeInfinitelyConfused(u32 battler)
 {
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
     if  (ability == ABILITY_OWN_TEMPO
       || IsMistyTerrainAffected(battler, ability, GetBattlerHoldEffect(battler), gFieldStatuses)
       || gSideStatuses[GetBattlerSide(battler)] & SIDE_STATUS_SAFEGUARD)
@@ -195,6 +196,7 @@ static enum ItemEffect TryKingsRock(u32 battlerAtk, u32 battlerDef, enum Item it
         return effect;
 
     enum Ability ability = GetBattlerAbility(battlerAtk);
+    enum Aspect aspect = GetBattlerAspect(battlerAtk);
     u32 holdEffectParam = GetItemHoldEffectParam(item);
 
     if (B_SERENE_GRACE_BOOST >= GEN_5 && ability == ABILITY_SERENE_GRACE)
@@ -236,6 +238,7 @@ static enum ItemEffect TryRockyHelmet(u32 battlerDef, u32 battlerAtk, enum Item 
 {
     enum ItemEffect effect = ITEM_NO_EFFECT;
     enum Ability ability = GetBattlerAbility(battlerAtk);
+    enum Aspect aspect = GetBattlerAspect(battlerAtk);
 
     if (IsBattlerTurnDamaged(battlerDef)
      && IsBattlerAlive(battlerAtk)
@@ -597,6 +600,7 @@ static enum ItemEffect TryToxicOrb(u32 battler)
 {
     enum ItemEffect effect = ITEM_NO_EFFECT;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     if (CanBePoisoned(battler, battler, ability, ability)) // Can corrosion trigger toxic orb on itself?
     {
@@ -612,6 +616,7 @@ static enum ItemEffect TryFlameOrb(u32 battler)
 {
     enum ItemEffect effect = ITEM_NO_EFFECT;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     if (CanBeBurned(battler, battler, ability))
     {
@@ -815,6 +820,7 @@ static u32 ItemHealHp(u32 battler, enum Item itemId, enum HealAmount percentHeal
 {
     enum ItemEffect effect = ITEM_NO_EFFECT;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     if (!(gBattleScripting.overrideBerryRequirements && gBattleMons[battler].hp == gBattleMons[battler].maxHP)
      && !(B_HEAL_BLOCKING >= GEN_5 && gBattleMons[battler].volatiles.healBlock)
@@ -843,6 +849,7 @@ static u32 ItemRestorePp(u32 battler, enum Item itemId)
     struct Pokemon *mon = GetBattlerMon(battler);
     u32 i, changedPP = 0;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
@@ -904,6 +911,7 @@ static enum ItemEffect StatRaiseBerry(u32 battler, enum Item itemId, enum Stat s
 {
     enum ItemEffect effect = ITEM_NO_EFFECT;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     if (CompareStat(battler, statId, MAX_STAT_STAGE, CMP_LESS_THAN, ability)
      && HasEnoughHpToEatBerry(battler, ability, GetItemHoldEffectParam(itemId), itemId))
@@ -940,6 +948,7 @@ static enum ItemEffect RandomStatRaiseBerry(u32 battler, enum Item itemId)
     enum ItemEffect effect = ITEM_NO_EFFECT;
     enum Stat stat;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     for (stat = STAT_ATK; stat < NUM_STATS; stat++)
     {

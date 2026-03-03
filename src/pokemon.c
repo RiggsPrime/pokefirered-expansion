@@ -54,6 +54,7 @@
 // #include "trainer_hill.h"
 #include "util.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_frontier.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_partner.h"
@@ -103,6 +104,7 @@ EWRAM_DATA static u8 sTriedEvolving = 0;
 EWRAM_DATA u16 gFollowerSteps = 0;
 
 #include "data/abilities.h"
+#include "data/aspects.h"
 
 // Used in an unreferenced function in RS.
 // Unreferenced here and in FRLG.
@@ -1457,6 +1459,8 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u32 personal
     //using gen 3-4 ability formula, it was changed in later gens
     if (GetSpeciesAbility(species, 1))
         SetBoxMonData(boxMon, MON_DATA_ABILITY_NUM, &value);
+    if (GetSpeciesAspect(species))
+        SetBoxMonData(boxMon, MON_DATA_ASPECT_NUM, &value);
 }
 
 static bool32 IsValidGender(u32 gender)
@@ -3579,11 +3583,23 @@ enum Ability GetAbilityBySpecies(u16 species, u8 abilityNum)
     return gLastUsedAbility;
 }
 
+// R TODO: Figure out what to do for this function
+enum Aspect GetAspectBySpecies(u16 species)
+{
+    return GetSpeciesAspect(species);
+}
+
 enum Ability GetMonAbility(struct Pokemon *mon)
 {
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
     u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM);
     return GetAbilityBySpecies(species, abilityNum);
+}
+
+enum Aspect GetMonAspect(struct Pokemon *mon)
+{
+    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+    return GetAspectBySpecies(species);
 }
 
 void CreateSecretBaseEnemyParty(struct SecretBase *secretBaseRecord)
@@ -3695,6 +3711,10 @@ enum Type GetSpeciesType(u16 species, u8 slot)
 enum Ability GetSpeciesAbility(u16 species, u8 slot)
 {
     return gSpeciesInfo[SanitizeSpeciesId(species)].abilities[slot];
+}
+enum Aspect GetSpeciesAspect(u16 species)
+{
+    return gSpeciesInfo[SanitizeSpeciesId(species)].aspect;
 }
 
 u32 GetSpeciesBaseHP(u16 species)
@@ -3857,6 +3877,7 @@ void PokemonToBattleMon(struct Pokemon *src, struct BattlePokemon *dst)
     dst->types[2] = TYPE_MYSTERY;
     dst->isShiny = IsMonShiny(src);
     dst->ability = GetAbilityBySpecies(dst->species, dst->abilityNum);
+    dst->aspect = GetAspectBySpecies(dst->species);
     GetMonData(src, MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(dst->nickname, nickname);
     GetMonData(src, MON_DATA_OT_NAME, dst->otName);

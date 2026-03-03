@@ -18,6 +18,7 @@
 #include "script_pokemon_util.h"
 #include "wild_encounter.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_frontier.h"
 #include "constants/items.h"
 #include "constants/pokemon.h"

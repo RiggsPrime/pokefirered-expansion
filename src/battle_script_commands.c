@@ -55,6 +55,7 @@
 #include "generational_changes.h"
 #include "move.h"
 #include "constants/abilities.h"
+#include "constants/aspects.h"
 #include "constants/battle_anim.h"
 #include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
@@ -1129,6 +1130,7 @@ static bool32 ShouldBypassAccuracyCheckFrlg(void)
 static void AccuracyCheck(bool32 recalcDragonDarts, const u8 *nextInstr, const u8 *failInstr)
 {
     enum Ability abilityAtk = GetBattlerAbility(gBattlerAttacker);
+    enum Aspect aspectAtk = GetBattlerAspect(gBattlerAttacker);
     enum HoldEffect holdEffectAtk = GetBattlerHoldEffect(gBattlerAttacker);
 
     if (ShouldBypassAccuracyCheckFrlg())
@@ -1178,6 +1180,8 @@ static void AccuracyCheck(bool32 recalcDragonDarts, const u8 *nextInstr, const u
         cv.battlerDef = battlerDef;
         cv.abilities[gBattlerAttacker] = abilityAtk;
         cv.abilities[battlerDef] = GetBattlerAbility(battlerDef);
+        cv.aspects[gBattlerAttacker] = aspectAtk;
+        cv.aspects[battlerDef] = GetBattlerAspect(battlerDef);
         cv.holdEffects[gBattlerAttacker] = holdEffectAtk;
         cv.holdEffects[battlerDef] = GetBattlerHoldEffect(battlerDef);
 
@@ -1376,6 +1380,8 @@ static void Cmd_typecalc(void)
     ctx.updateFlags = TRUE;
     ctx.abilityAtk = GetBattlerAbility(gBattlerAttacker);
     ctx.abilityDef = GetBattlerAbility(gBattlerTarget);
+    ctx.aspectAtk = GetBattlerAspect(gBattlerAttacker);
+    ctx.aspectDef = GetBattlerAspect(gBattlerTarget);
     ctx.holdEffectAtk = GetBattlerHoldEffect(gBattlerAttacker);
     ctx.holdEffectDef = GetBattlerHoldEffect(gBattlerTarget);
     CalcTypeEffectivenessMultiplier(&ctx);
@@ -1415,6 +1421,7 @@ static inline bool32 DoesBattlerNegateDamage(enum BattlerId battler)
 {
     u32 species = gBattleMons[battler].species;
     enum Ability ability = GetBattlerAbility(battler);
+    enum Aspect aspect = GetBattlerAspect(battler);
 
     if (gBattleMons[battler].volatiles.transformed)
         return FALSE;
@@ -2385,6 +2392,10 @@ void SetMoveEffect(enum BattlerId battlerAtk, enum BattlerId effectBattler, enum
     enum Ability abilities[MAX_BATTLERS_COUNT] = {ABILITY_NONE};
     abilities[battlerAtk] = GetBattlerAbility(battlerAtk);
     abilities[effectBattler] = GetBattlerAbility(effectBattler);
+
+    enum Aspect aspects[MAX_BATTLERS_COUNT] = {ASPECT_NONE};
+    aspects[battlerAtk] = GetBattlerAspect(battlerAtk);
+    aspects[effectBattler] = GetBattlerAspect(effectBattler);
 
     s32 i;
     bool32 primary = effectFlags & EFFECT_PRIMARY;
@@ -5187,6 +5198,7 @@ static void Cmd_switchindataupdate(void)
     gBattleMons[battler].types[1] = GetSpeciesType(gBattleMons[battler].species, 1);
     gBattleMons[battler].types[2] = TYPE_MYSTERY;
     gBattleMons[battler].ability = GetAbilityBySpecies(gBattleMons[battler].species, gBattleMons[battler].abilityNum);
+    gBattleMons[battler].aspect = GetAspectBySpecies(gBattleMons[battler].species);
     #if TESTING
     if (gTestRunnerEnabled)
     {
@@ -7362,6 +7374,7 @@ static void Cmd_trysetrest(void)
     gBattlerTarget = gBattlerAttacker;
     SetHealAmount(gBattlerTarget, gBattleMons[gBattlerTarget].maxHP);
     enum Ability ability = GetBattlerAbility(gBattlerTarget);
+    enum Aspect aspect = GetBattlerAspect(gBattlerTarget);
     enum HoldEffect holdEffect = GetBattlerHoldEffect(gBattlerTarget);
 
     if (IsElectricTerrainAffected(gBattlerTarget, ability, holdEffect, gFieldStatuses))
@@ -9875,6 +9888,7 @@ static void Cmd_setyawn(void)
 {
     CMD_ARGS(const u8 *failInstr);
     enum Ability ability = GetBattlerAbility(gBattlerTarget);
+    enum Aspect aspect = GetBattlerAspect(gBattlerTarget);
     enum HoldEffect holdEffect = GetBattlerHoldEffect(gBattlerTarget);
 
     if (gBattleMons[gBattlerTarget].volatiles.yawn

@@ -63,6 +63,9 @@ struct Pokemon
     struct String ability;
     int ability_line;
 
+    struct String aspect;
+    int aspect_line;
+
     int level;
     int level_line;
 
@@ -1425,6 +1428,13 @@ static bool parse_trainer(struct Parser *p, const struct Parsed *parsed, struct 
                 pokemon->ability_line = value.location.line;
                 pokemon->ability = token_string(&value);
             }
+            else if (is_literal_token(&key, "Aspect"))
+            {
+                if (pokemon->aspect_line)
+                    any_error = !set_show_parse_error(p, key.location, "duplicate 'Aspect'");
+                pokemon->aspect_line = value.location.line;
+                pokemon->aspect = token_string(&value);
+            }
             else if (is_literal_token(&key, "Level"))
             {
                 if (pokemon->level_line)
@@ -1496,7 +1506,7 @@ static bool parse_trainer(struct Parser *p, const struct Parsed *parsed, struct 
             }
             else
             {
-                any_error = !set_show_parse_error(p, key.location, "expected one of 'EVs', 'IVs', 'Ability', 'Level', 'Ball', 'Happiness', 'Nature', 'Shiny', 'Dynamax Level', 'Gigantamax', or 'Tera Type'");
+                any_error = !set_show_parse_error(p, key.location, "expected one of 'EVs', 'IVs', 'Ability', 'Aspect', 'Level', 'Ball', 'Happiness', 'Nature', 'Shiny', 'Dynamax Level', 'Gigantamax', or 'Tera Type'");
             }
         }
 

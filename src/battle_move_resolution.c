@@ -1651,6 +1651,7 @@ enum CancelerResult DoAttackCanceler(void)
     ctx.move = gCurrentMove;
     ctx.chosenMove = gChosenMove;
     ctx.abilityAtk = GetBattlerAbility(ctx.battlerAtk);
+    ctx.aspectAtk = GetBattlerAspect(ctx.battlerAtk);
     ctx.holdEffectAtk = GetBattlerHoldEffect(ctx.battlerAtk);
 
     while (gBattleStruct->eventState.atkCanceler < CANCELER_END && result == CANCELER_RESULT_SUCCESS)
