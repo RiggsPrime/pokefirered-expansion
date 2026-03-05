@@ -104,10 +104,13 @@ struct MoveInfo
     bool32 snatchAffected:1;
     bool32 ignoresKingsRock:1;
     bool32 punchingMove:1;
+    bool32 clawMove:1;
+    bool32 hornMove:1;
     bool32 bitingMove:1;
     bool32 pulseMove:1;
     bool32 soundMove:1;
     bool32 ballisticMove:1;
+    bool32 gunMove:1;
     bool32 powderMove:1;
     bool32 danceMove:1;
     bool32 windMove:1;
@@ -347,6 +350,16 @@ static inline bool32 IsPunchingMove(enum Move moveId)
     return gMovesInfo[SanitizeMoveId(moveId)].punchingMove;
 }
 
+static inline bool32 IsClawMove(enum Move moveId)
+{
+    return gMovesInfo[SanitizeMoveId(moveId)].clawMove;
+}
+
+static inline bool32 IsHornMove(enum Move moveId)
+{
+    return gMovesInfo[SanitizeMoveId(moveId)].hornMove;
+}
+
 static inline bool32 IsBitingMove(enum Move moveId)
 {
     return gMovesInfo[SanitizeMoveId(moveId)].bitingMove;
@@ -365,6 +378,11 @@ static inline bool32 IsSoundMove(enum Move moveId)
 static inline bool32 IsBallisticMove(enum Move moveId)
 {
     return gMovesInfo[SanitizeMoveId(moveId)].ballisticMove;
+}
+
+static inline bool32 IsGunMove(enum Move moveId)
+{
+    return gMovesInfo[SanitizeMoveId(moveId)].gunMove;
 }
 
 static inline bool32 IsPowderMove(enum Move moveId)

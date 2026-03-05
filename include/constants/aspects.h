@@ -5,6 +5,15 @@ enum __attribute__((packed)) Aspect
 {
     ASPECT_NONE = 0,
     ASPECT_TEST = 1,
+    ASPECT_BULBASAUR = 2,
+    ASPECT_IVYSAUR = 3,
+    ASPECT_VENUSAUR = 4,
+    ASPECT_CHARMANDER = 5,
+    ASPECT_CHARMELEON = 6,
+    ASPECT_CHARIZARD = 7,
+    ASPECT_SQUIRTLE = 8,
+    ASPECT_WARTORTLE = 9,
+    ASPECT_BLASTOISE = 10,
     ASPECTS_COUNT,
 };
 

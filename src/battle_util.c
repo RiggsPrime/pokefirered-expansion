@@ -6812,6 +6812,20 @@ static inline u32 CalcMoveBasePowerAfterModifiers(struct BattleContext *ctx)
     case ASPECT_TEST:
         modifier = uq4_12_multiply(modifier, UQ_4_12(10.0));
         break;
+    case ASPECT_CHARIZARD:
+        if (moveType == TYPE_DRAGON)
+           modifier = uq4_12_multiply(modifier, UQ_4_12(1.5));
+    case ASPECT_CHARMELEON:
+        if (IsSlicingMove(move) || IsClawMove(move))
+           modifier = uq4_12_multiply(modifier, UQ_4_12(1.3));
+        break;
+    case ASPECT_BLASTOISE:
+        if (IsPulseMove(move) || IsBallisticMove(move))
+           modifier = uq4_12_multiply(modifier, UQ_4_12(1.3));
+    case ASPECT_SQUIRTLE:
+        if (IsGunMove(move))
+            modifier = uq4_12_multiply(modifier, UQ_4_12(1.3));
+        break;
     default:
         break;
     }
@@ -8308,6 +8322,12 @@ static inline void MulByTypeEffectiveness(struct BattleContext *ctx, uq4_12_t *m
     if (ctx->moveType == TYPE_GROUND && defType == TYPE_FLYING && IsBattlerGrounded(ctx->battlerDef, ctx->abilityDef, ctx->holdEffectDef) && mod == UQ_4_12(0.0))
         mod = UQ_4_12(1.0);
     if (ctx->moveType == TYPE_STELLAR && GetActiveGimmick(ctx->battlerDef) == GIMMICK_TERA)
+        mod = UQ_4_12(2.0);
+
+    // aspect logic
+    if ((ctx->aspectAtk == ASPECT_CHARMANDER || ctx->aspectAtk == ASPECT_CHARMELEON) && defType == TYPE_ROCK)
+        mod = UQ_4_12(1.0);
+    if (ctx->aspectAtk == ASPECT_CHARIZARD && defType == TYPE_ROCK)
         mod = UQ_4_12(2.0);
 
     // B_WEATHER_STRONG_WINDS weakens Super Effective moves against Flying-type Pokémon
