@@ -55,19 +55,19 @@ const struct AspectInfo gAspectsInfo[ASPECTS_COUNT] =
     
     [ASPECT_SQUIRTLE] = 
     {
-        .name = _("Charizard"),
+        .name = _("Squirtle"),
         .description = COMPOUND_STRING("Boost the power of gun moves."),
         .aiRating = 0,
     },
     [ASPECT_WARTORTLE] = 
     {
-        .name = _("Charizard"),
+        .name = _("Wartortle"),
         .description = COMPOUND_STRING("Lives fatal blows from full health."),
         .aiRating = 0,
     },
     [ASPECT_BLASTOISE] = 
     {
-        .name = _("Charizard"),
+        .name = _("Blastoise"),
         .description = COMPOUND_STRING("Boosts the power of gun, projectile, and pulse moves."),
         .aiRating = 0,
     },

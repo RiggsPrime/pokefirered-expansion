@@ -1229,12 +1229,17 @@ static void AccuracyCheck(bool32 recalcDragonDarts, const u8 *nextInstr, const u
             gBattlescriptCurrInstr = BattleScript_SturdyPreventsOHKO;
             gBattlerAbility = gBattlerTarget;
         }
+        if (gBattleStruct->moveResultFlags[gBattlerTarget] & MOVE_RESULT_ONE_HIT_KO_ASPECT)
+        {
+            gBattlescriptCurrInstr = BattleScript_AspectPreventsOHKO;
+            gBattlerAbility = gBattlerTarget;
+        }
         else
         {
             gBattlescriptCurrInstr = failInstr;
         }
 
-        if (gBattleStruct->moveResultFlags[gBattlerTarget] & (MOVE_RESULT_ONE_HIT_KO_NO_AFFECT | MOVE_RESULT_ONE_HIT_KO_STURDY))
+        if (gBattleStruct->moveResultFlags[gBattlerTarget] & (MOVE_RESULT_ONE_HIT_KO_NO_AFFECT | MOVE_RESULT_ONE_HIT_KO_STURDY | MOVE_RESULT_ONE_HIT_KO_ASPECT))
             gBattleStruct->moveResultFlags[gBattlerTarget] = MOVE_RESULT_DOESNT_AFFECT_FOE;
         else
             gBattleStruct->moveResultFlags[gBattlerTarget] = MOVE_RESULT_MISSED;
@@ -1401,7 +1406,13 @@ static void Cmd_multihitresultmessage(void)
     {
         if (gBattleStruct->moveResultFlags[gBattlerTarget] & MOVE_RESULT_STURDIED)
         {
-            gBattleStruct->moveResultFlags[gBattlerTarget] &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_FOE_HUNG_ON);
+            gBattleStruct->moveResultFlags[gBattlerTarget] &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_STURDIED_ASPECT | MOVE_RESULT_FOE_HUNG_ON);
+            BattleScriptCall(BattleScript_SturdiedMsg);
+            return;
+        }
+        if (gBattleStruct->moveResultFlags[gBattlerTarget] & MOVE_RESULT_STURDIED_ASPECT)
+        {
+            gBattleStruct->moveResultFlags[gBattlerTarget] &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_STURDIED_ASPECT | MOVE_RESULT_FOE_HUNG_ON);
             BattleScriptCall(BattleScript_SturdiedMsg);
             return;
         }
@@ -1409,7 +1420,7 @@ static void Cmd_multihitresultmessage(void)
         {
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
             gPotentialItemEffectBattler = gBattlerTarget;
-            gBattleStruct->moveResultFlags[gBattlerTarget] &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_FOE_HUNG_ON);
+            gBattleStruct->moveResultFlags[gBattlerTarget] &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_STURDIED_ASPECT | MOVE_RESULT_FOE_HUNG_ON);
             BattleScriptCall(BattleScript_HangedOnMsg);
             return;
         }
@@ -1952,8 +1963,10 @@ static void Cmd_effectivenesssound(void)
             break;
         case MOVE_RESULT_FOE_ENDURED:
         case MOVE_RESULT_ONE_HIT_KO:
+        case MOVE_RESULT_ONE_HIT_KO_ASPECT:
         case MOVE_RESULT_FOE_HUNG_ON:
         case MOVE_RESULT_STURDIED:
+        case MOVE_RESULT_STURDIED_ASPECT:
         default:
             if (moveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
             {
@@ -2108,6 +2121,12 @@ static void Cmd_resultmessage(void)
             {
                 *moveResultFlags &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
                 BattleScriptCall(BattleScript_SturdiedMsg);
+                return;
+            }
+            else if (*moveResultFlags & MOVE_RESULT_STURDIED_ASPECT)
+            {
+                *moveResultFlags &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_STURDIED_ASPECT | MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
+                BattleScriptCall(BattleScript_SturdiedAspectMsg);
                 return;
             }
             else if (*moveResultFlags & MOVE_RESULT_FOE_ENDURED)

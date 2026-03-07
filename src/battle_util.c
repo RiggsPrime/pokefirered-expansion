@@ -8279,6 +8279,11 @@ s32 GetAdjustedDamage(struct BattleContext *ctx, s32 damage)
         gLastUsedAbility = ABILITY_STURDY;
         gBattleStruct->moveResultFlags[ctx->battlerDef] |= MOVE_RESULT_STURDIED;
     }
+    else if ((ctx->aspectDef == ASPECT_WARTORTLE || ctx->aspectDef == ASPECT_BLASTOISE) && IsBattlerAtMaxHp(ctx->battlerDef))
+    {
+        enduredHit = TRUE;
+        gBattleStruct->moveResultFlags[ctx->battlerDef] |= MOVE_RESULT_STURDIED_ASPECT;
+    }
     else if (ctx->holdEffectDef == HOLD_EFFECT_FOCUS_SASH && IsBattlerAtMaxHp(ctx->battlerDef))
     {
         enduredHit = TRUE;
@@ -10665,6 +10670,12 @@ bool32 DoesOHKOMoveMissTarget(struct BattleCalcValues *cv)
     if (cv->abilities[cv->battlerDef] == ABILITY_STURDY)
     {
         gBattleStruct->moveResultFlags[cv->battlerDef] |= MOVE_RESULT_ONE_HIT_KO_STURDY;
+        return TRUE;
+    }
+
+    if (cv->aspects[cv->battlerDef] == ASPECT_WARTORTLE || cv->aspects[cv->battlerDef] == ASPECT_BLASTOISE)
+    {
+        gBattleStruct->moveResultFlags[cv->battlerDef] |= MOVE_RESULT_ONE_HIT_KO_ASPECT;
         return TRUE;
     }
 

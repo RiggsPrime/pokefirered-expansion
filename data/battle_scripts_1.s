@@ -5418,6 +5418,12 @@ BattleScript_SturdiedMsg::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
+BattleScript_SturdiedAspectMsg::
+	pause B_WAIT_TIME_SHORTEST
+	printstring STRINGID_ENDUREDSTURDYASPECT
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_OneHitKOMsg::
 	printstring STRINGID_ONEHITKO
 	waitmessage B_WAIT_TIME_LONG
@@ -6566,6 +6572,12 @@ BattleScript_TookAttack::
 BattleScript_SturdyPreventsOHKO::
 	pause B_WAIT_TIME_SHORT
 	call BattleScript_AbilityPopUp
+	printstring STRINGID_PKMNPROTECTEDBY
+	pause B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_AspectPreventsOHKO::
+	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNPROTECTEDBY
 	pause B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
