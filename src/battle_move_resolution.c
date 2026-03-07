@@ -1351,6 +1351,7 @@ static enum CancelerResult CancelerTargetFailure(struct BattleContext *ctx)
             continue;
 
         ctx->abilityDef = GetBattlerAbility(ctx->battlerDef);
+        ctx->aspectDef = GetBattlerAspect(ctx->battlerDef);
         ctx->holdEffectDef = GetBattlerHoldEffect(ctx->battlerDef);
 
         if (moveTarget == TARGET_OPPONENTS_FIELD)
@@ -1413,6 +1414,15 @@ static enum CancelerResult CancelerTargetFailure(struct BattleContext *ctx)
                 gBattlerAbility = ctx->battlerDef;
                 RecordAbilityBattle(ctx->battlerDef, ctx->abilityDef);
                 BattleScriptCall(BattleScript_AbilityPopUp);
+                targetAvoidedAttack = TRUE;
+            }
+            if (ctx->aspectBlocked)
+            {
+                ctx->aspectBlocked = FALSE;
+                gBattleStruct->moveResultFlags[ctx->battlerDef] = MOVE_RESULT_FAILED;
+                gBattlerAspect = ctx->battlerDef;
+                RecordAspectBattle(ctx->battlerDef, ctx->aspectDef);
+                BattleScriptCall(BattleScript_DoesntAffectScripting);
                 targetAvoidedAttack = TRUE;
             }
             else if (ctx->airBalloonBlocked)

@@ -6587,6 +6587,14 @@ BattleScript_MoveHPDrain::
 	printstring STRINGID_PKMNRESTOREDHPUSING
 	waitmessage B_WAIT_TIME_LONG
 	return
+	
+BattleScript_AspectMoveHPDrain::
+	pause B_WAIT_TIME_SHORT
+	healthbarupdate BS_SCRIPTING, PASSIVE_HP_UPDATE
+	datahpupdate BS_SCRIPTING, PASSIVE_HP_UPDATE
+	printstring STRINGID_PKMNRESTOREDHPUSING
+	waitmessage B_WAIT_TIME_LONG
+	return
 
 BattleScript_MoveStatDrain::
 	pause B_WAIT_TIME_SHORT
@@ -6602,6 +6610,12 @@ BattleScript_MonMadeMoveUseless::
 	pause B_WAIT_TIME_SHORT
 	call BattleScript_AbilityPopUp
 	printstring STRINGID_PKMNSXMADEYUSELESS
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_MonAspectMadeMoveUseless::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_PKMNSASPECTMADEYUSELESS
 	waitmessage B_WAIT_TIME_LONG
 	return
 

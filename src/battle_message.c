@@ -623,6 +623,7 @@ const u8 *const gBattleStringsTable[STRINGID_COUNT] =
     [STRINGID_USINGITEMSTATOFPKMNFELL]              = COMPOUND_STRING("Using {B_LAST_ITEM}, the {B_BUFF1} of {B_SCR_NAME_WITH_PREFIX2} {B_BUFF2}fell!"),
     [STRINGID_PKMNUSEDXTOGETPUMPED]                 = COMPOUND_STRING("{B_SCR_NAME_WITH_PREFIX} used the {B_LAST_ITEM} to get pumped!"),
     [STRINGID_PKMNSXMADEYUSELESS]                   = COMPOUND_STRING("{B_SCR_NAME_WITH_PREFIX}'s {B_SCR_ABILITY} made {B_CURRENT_MOVE} useless!"), //not in gen 5+, ability popup
+    [STRINGID_PKMNSASPECTMADEYUSELESS]              = COMPOUND_STRING("{B_SCR_NAME_WITH_PREFIX}'s aspect made {B_CURRENT_MOVE} useless!"),
     [STRINGID_PKMNTRAPPEDBYSANDTOMB]                = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} became trapped by the quicksand!"),
     [STRINGID_EMPTYSTRING4]                         = COMPOUND_STRING(""),
     [STRINGID_ABOOSTED]                             = COMPOUND_STRING(" a boosted"),

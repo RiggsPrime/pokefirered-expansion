@@ -13,6 +13,25 @@ const struct AspectInfo gAspectsInfo[ASPECTS_COUNT] =
         .description = COMPOUND_STRING("Test aspect."),
         .aiRating = 0,
     },
+
+    [ASPECT_BULBASAUR] = 
+    {
+        .name = _("Bulbasaur"),
+        .description = COMPOUND_STRING("Test aspect."),
+        .aiRating = 0,
+    },
+    [ASPECT_IVYSAUR] = 
+    {
+        .name = _("Ivysaur"),
+        .description = COMPOUND_STRING("Test aspect."),
+        .aiRating = 0,
+    },
+    [ASPECT_VENUSAUR] = 
+    {
+        .name = _("Venusaur"),
+        .description = COMPOUND_STRING("Absorbs Fire-type moves."),
+        .aiRating = 0,
+    },
     
     [ASPECT_CHARMANDER] = 
     {
@@ -22,7 +41,7 @@ const struct AspectInfo gAspectsInfo[ASPECTS_COUNT] =
     },
     [ASPECT_CHARMELEON] = 
     {
-        .name = _("Test Aspect"),
+        .name = _("Charmeleon"),
         .description = COMPOUND_STRING("Deal neutral damage to Rock-types."),
         .aiRating = 0,
     },

@@ -135,6 +135,7 @@ struct BattleContext
     u32 aiCheckBerryModifier:1; // Flags that KOing through a berry should be checked
     u32 airBalloonBlocked:1;
     u32 abilityBlocked:1;
+    u32 aspectBlocked:1;
     u32 runScript:1;  // Used during actual combat where scripts have to be run / flags need to be set
     u32 padding:22;
 };
@@ -230,6 +231,7 @@ bool32 CanTargetBlockPranksterMove(struct BattleContext *ctx, s32 movePriority);
 bool32 CanPsychicTerrainProtectTarget(struct BattleContext *ctx, s32 movePriority);
 bool32 CanMoveBeBlockedByTarget(struct BattleContext *ctx, s32 movePriority);
 bool32 CanAbilityAbsorbMove(struct BattleContext *ctx);
+bool32 CanAspectAbsorbMove(struct BattleContext *ctx);
 bool32 TryFieldEffects(enum FieldEffectCases caseId);
 u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum Ability ability, enum Move move, bool32 shouldAbilityTrigger);
 bool32 TryPrimalReversion(enum BattlerId battler);

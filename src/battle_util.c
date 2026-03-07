@@ -65,6 +65,7 @@ static void ResetParadoxTerrainStat(enum BattlerId battler);
 static bool32 CanBattlerFormChange(enum BattlerId battler, enum FormChanges method);
 static bool32 IsPowderMoveBlocked(struct BattleContext *ctx);
 const u8 *AbsorbedByDrainHpAbility(enum BattlerId battlerDef);
+const u8 *AbsorbedByDrainHpAspect(enum BattlerId battlerDef);
 const u8 *AbsorbedByStatIncreaseAbility(enum BattlerId battlerDef, enum Ability abilityDef, enum Stat statId, u32 statAmount);
 const u8 *AbsorbedByFlashFire(enum BattlerId battlerDef);
 
@@ -2445,7 +2446,8 @@ bool32 CanMoveBeBlockedByTarget(struct BattleContext *ctx, s32 movePriority)
     return CanPsychicTerrainProtectTarget(ctx, movePriority)
         || CanTargetBlockPranksterMove(ctx, movePriority)
         || IsPowderMoveBlocked(ctx)
-        || CanAbilityAbsorbMove(ctx);
+        || CanAbilityAbsorbMove(ctx)
+        || CanAspectAbsorbMove(ctx);
 }
 
 bool32 CanPsychicTerrainProtectTarget(struct BattleContext *ctx, s32 movePriority)
@@ -2574,6 +2576,33 @@ bool32 CanAbilityAbsorbMove(struct BattleContext *ctx)
     return TRUE;
 }
 
+bool32 CanAspectAbsorbMove(struct BattleContext *ctx)
+{
+    const u8 *battleScript = NULL;
+
+    switch (ctx->aspectDef)
+    {
+    case ASPECT_VENUSAUR:
+        if (ctx->moveType == TYPE_FIRE)
+            battleScript = AbsorbedByDrainHpAspect(ctx->battlerDef);
+        break;
+    default:
+        break;
+    }
+
+    if (battleScript == NULL)
+        return FALSE;
+
+    if (ctx->runScript)
+    {
+        gLastUsedAspect = ctx->aspectDef;
+        gBattleScripting.battler = gBattlerAspect = ctx->battlerDef;
+        BattleScriptCall(battleScript);
+    }
+
+    return TRUE;
+}
+
 const u8 *AbsorbedByDrainHpAbility(enum BattlerId battlerDef)
 {
     if (IsBattlerAtMaxHp(battlerDef) || (B_HEAL_BLOCKING >= GEN_5 && gBattleMons[battlerDef].volatiles.healBlock))
@@ -2584,6 +2613,19 @@ const u8 *AbsorbedByDrainHpAbility(enum BattlerId battlerDef)
     {
         SetHealAmount(battlerDef, GetNonDynamaxMaxHP(battlerDef) / 4);
         return BattleScript_MoveHPDrain;
+    }
+}
+
+const u8 *AbsorbedByDrainHpAspect(enum BattlerId battlerDef)
+{
+    if (IsBattlerAtMaxHp(battlerDef) || (B_HEAL_BLOCKING >= GEN_5 && gBattleMons[battlerDef].volatiles.healBlock))
+    {
+        return BattleScript_MonAspectMadeMoveUseless;
+    }
+    else
+    {
+        SetHealAmount(battlerDef, GetNonDynamaxMaxHP(battlerDef) / 4);
+        return BattleScript_AspectMoveHPDrain;
     }
 }
 
@@ -8564,7 +8606,8 @@ uq4_12_t GetOverworldTypeEffectiveness(struct Pokemon *mon, enum Type moveType)
         MulByTypeEffectiveness(&ctx, &modifier, type2);
 
     if ((modifier <= UQ_4_12(1.0) && ctx.abilityDef == ABILITY_WONDER_GUARD)
-     || CanAbilityAbsorbMove(&ctx))
+     || CanAbilityAbsorbMove(&ctx)
+     || CanAspectAbsorbMove(&ctx))
         modifier = UQ_4_12(0.0);
 
     return modifier;

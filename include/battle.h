@@ -492,6 +492,7 @@ struct BattlerState
     u32 multipleSwitchInBattlers:1;
     u32 alreadyStatusedMoveAttempt:1; // For example when using Thunder Wave on an already paralyzed Pokémon.
     u32 activeAbilityPopUps:1;
+    u32 activeAspectPopUps:1;
     u32 forcedSwitch:1;
     u32 storedHealingWish:1;
     u32 storedLunarDance:1;
@@ -635,6 +636,7 @@ struct BattleStruct
     u8 savedTargetCount:4;
     u8 savedAttackerCount:4;
     u8 abilityPopUpSpriteIds[MAX_BATTLERS_COUNT][NUM_BATTLE_SIDES];    // two per battler
+    u8 aspectPopUpSpriteIds[MAX_BATTLERS_COUNT][NUM_BATTLE_SIDES];    // two per battler
     struct ZMoveData zmove;
     struct DynamaxData dynamax;
     struct BattleGimmickData gimmick;
@@ -834,6 +836,7 @@ struct BattleScripting
     u8 illusionNickHack; // To properly display nick in STRINGID_ENEMYABOUTTOSWITCHPKMN.
     bool8 fixedPopup;   // Force ability popup to stick until manually called back
     u16 abilityPopupOverwrite;
+    u16 aspectPopupOverwrite;
     u8 switchCase;  // Special switching conditions, eg. red card
     u8 overrideBerryRequirements;
     u8 stickyWebStatDrop; // To prevent Defiant activating on a Court Change'd Sticky Web
@@ -1051,6 +1054,7 @@ extern u32 gFieldStatuses;
 extern struct FieldTimer gFieldTimers;
 extern u16 gBattleTurnCounter;
 extern enum BattlerId gBattlerAbility;
+extern enum BattlerId gBattlerAspect;
 extern struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT];
 
 extern MainCallback gPreBattleCallback1;

@@ -237,6 +237,7 @@ EWRAM_DATA u32 gFieldStatuses = 0;
 EWRAM_DATA struct FieldTimer gFieldTimers = {0};
 EWRAM_DATA u16 gBattleTurnCounter = 0;
 EWRAM_DATA enum BattlerId gBattlerAbility = 0;
+EWRAM_DATA enum BattlerId gBattlerAspect = 0;
 EWRAM_DATA struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA bool8 gHasFetchedBall = FALSE;
 EWRAM_DATA u16 gLastUsedBall = 0;
@@ -3102,6 +3103,7 @@ static void BattleStartClearSetData(void)
     gBattlerTarget = 0;
     gEffectBattler = 0;
     gBattlerAbility = 0;
+    gBattlerAspect = 0;
     gBattleWeather = 0;
     gHitMarker = 0;
 

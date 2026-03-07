@@ -266,6 +266,12 @@ void RecordAbilityBattle(enum BattlerId battlerId, enum Ability abilityId)
     gAiPartyData->mons[GetBattlerSide(battlerId)][gBattlerPartyIndexes[battlerId]].ability = abilityId;
 }
 
+void RecordAspectBattle(enum BattlerId battlerId, enum Aspect aspectId)
+{
+    gBattleHistory->aspects[battlerId] = aspectId;
+    gAiPartyData->mons[GetBattlerSide(battlerId)][gBattlerPartyIndexes[battlerId]].aspect = aspectId;
+}
+
 void ClearBattlerAbilityHistory(enum BattlerId battlerId)
 {
     gBattleHistory->abilities[battlerId] = ABILITY_NONE;

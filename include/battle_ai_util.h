@@ -96,6 +96,7 @@ void RecordLastUsedMoveBy(enum BattlerId battlerId, enum Move move);
 void RecordAllMoves(enum BattlerId battler);
 void RecordKnownMove(enum BattlerId battlerId, enum Move move);
 void RecordAbilityBattle(enum BattlerId battlerId, enum Ability abilityId);
+void RecordAspectBattle(enum BattlerId battlerId, enum Aspect aspectId);
 void ClearBattlerAbilityHistory(enum BattlerId battlerId);
 void RecordItemEffectBattle(enum BattlerId battlerId, enum HoldEffect itemEffect);
 void ClearBattlerItemEffectHistory(enum BattlerId battlerId);
