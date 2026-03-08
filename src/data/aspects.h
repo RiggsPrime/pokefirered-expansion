@@ -29,7 +29,7 @@ const struct AspectInfo gAspectsInfo[ASPECTS_COUNT] =
     [ASPECT_VENUSAUR] = 
     {
         .name = _("Venusaur"),
-        .description = COMPOUND_STRING("Absorbs Fire-type moves."),
+        .description = COMPOUND_STRING("Absorbs Fire-type moves in Clear or Sunny weather."),
         .aiRating = 0,
     },
     
@@ -42,14 +42,14 @@ const struct AspectInfo gAspectsInfo[ASPECTS_COUNT] =
     [ASPECT_CHARMELEON] = 
     {
         .name = _("Charmeleon"),
-        .description = COMPOUND_STRING("Deal neutral damage to Rock-types."),
+        .description = COMPOUND_STRING("Boost the power of claw and slicing moves."),
         .aiRating = 0,
     },
 
     [ASPECT_CHARIZARD] = 
     {
         .name = _("Charizard"),
-        .description = COMPOUND_STRING("Deal double damage to Rock-types."),
+        .description = COMPOUND_STRING("Deal double damage to Rock-types. Boosts Dragon-type moves"),
         .aiRating = 0,
     },
     

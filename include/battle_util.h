@@ -248,6 +248,8 @@ u32 IsAbilityOnOpposingSide(enum BattlerId battler, enum Ability ability);
 u32 IsAbilityOnField(enum Ability ability);
 u32 IsAbilityOnFieldExcept(enum BattlerId battler, enum Ability ability);
 u32 IsAbilityPreventingEscape(enum BattlerId battler);
+u32 IsAspectOnSide(enum BattlerId battler, enum Aspect aspect);
+u32 IsAspectOnOpposingSide(enum BattlerId battler, enum Aspect aspect);
 bool32 IsBattlerProtected(struct BattleContext *ctx);
 enum ProtectType GetProtectType(enum ProtectMethod method);
 bool32 CanBattlerEscape(enum BattlerId battler); // no ability check
