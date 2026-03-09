@@ -167,6 +167,13 @@
 	.4byte \jumpInstr
 	.endm
 
+	.macro jumpifaspect battler:req, aspect:req, jumpInstr:req
+	.byte B_SCR_OP_JUMPIFASPECT
+	.byte \battler
+	.2byte \aspect
+	.4byte \jumpInstr
+	.endm
+
 	.macro jumpifsideaffecting battler:req, flags:req, jumpInstr:req
 	.byte B_SCR_OP_JUMPIFSIDEAFFECTING
 	.byte \battler

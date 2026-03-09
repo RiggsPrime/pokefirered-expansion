@@ -387,6 +387,7 @@ static void Cmd_cleareffectsonfaint(void);
 static void Cmd_jumpifstatus(void);
 static void Cmd_jumpifvolatile(void);
 static void Cmd_jumpifability(void);
+static void Cmd_jumpifaspect(void);
 static void Cmd_jumpifsideaffecting(void);
 static void Cmd_jumpifstat(void);
 static void Cmd_jumpifstatignorecontrary(void);
@@ -617,6 +618,7 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     [B_SCR_OP_JUMPIFSTATUS]                          = Cmd_jumpifstatus,
     [B_SCR_OP_JUMPIFVOLATILE]                        = Cmd_jumpifvolatile,
     [B_SCR_OP_JUMPIFABILITY]                         = Cmd_jumpifability,
+    [B_SCR_OP_JUMPIFASPECT]                          = Cmd_jumpifaspect,
     [B_SCR_OP_JUMPIFSIDEAFFECTING]                   = Cmd_jumpifsideaffecting,
     [B_SCR_OP_JUMPIFSTAT]                            = Cmd_jumpifstat,
     [B_SCR_OP_JUMPIFSTATIGNORECONTRARY]              = Cmd_jumpifstatignorecontrary,
@@ -3936,6 +3938,52 @@ static void Cmd_jumpifability(void)
         gBattlescriptCurrInstr = cmd->jumpInstr;
         RecordAbilityBattle(battler, gLastUsedAbility);
         gBattlerAbility = battler;
+    }
+    else
+    {
+        gBattlescriptCurrInstr = cmd->nextInstr;
+    }
+}
+
+static void Cmd_jumpifaspect(void)
+{
+    CMD_ARGS(u8 battler, enum Aspect aspect, const u8 *jumpInstr);
+
+    enum BattlerId battler;
+    bool32 hasAspect = FALSE;
+    enum Aspect aspect = cmd->aspect;
+
+    switch (cmd->battler)
+    {
+    default:
+        battler = GetBattlerForBattleScript(cmd->battler);
+        if (GetBattlerAspect(battler) == aspect)
+            hasAspect = TRUE;
+        break;
+    case BS_ATTACKER_SIDE:
+        battler = IsAspectOnSide(gBattlerAttacker, aspect);
+        if (battler)
+        {
+            battler--;
+            hasAspect = TRUE;
+        }
+        break;
+    case BS_TARGET_SIDE:
+        battler = IsAspectOnOpposingSide(gBattlerAttacker, aspect);
+        if (battler)
+        {
+            battler--;
+            hasAspect = TRUE;
+        }
+        break;
+    }
+
+    if (hasAspect)
+    {
+        gLastUsedAspect = aspect;
+        gBattlescriptCurrInstr = cmd->jumpInstr;
+        RecordAspectBattle(battler, gLastUsedAspect);
+        gBattlerAspect = battler;
     }
     else
     {

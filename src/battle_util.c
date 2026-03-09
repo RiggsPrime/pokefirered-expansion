@@ -2583,7 +2583,7 @@ bool32 CanAspectAbsorbMove(struct BattleContext *ctx)
     switch (ctx->aspectDef)
     {
     case ASPECT_VENUSAUR:
-        if (ctx->moveType == TYPE_FIRE)
+        if (((gBattleWeather == B_WEATHER_NONE) || (gBattleWeather & B_WEATHER_SUN)) && ctx->moveType == TYPE_FIRE)
             battleScript = AbsorbedByDrainHpAspect(ctx->battlerDef);
         break;
     default:
@@ -5148,6 +5148,21 @@ u32 IsAbilityPreventingEscape(enum BattlerId battler)
     }
 
     return 0;
+}
+
+u32 IsAspectOnSide(enum BattlerId battler, enum Aspect aspect)
+{
+    if (IsBattlerAlive(battler) && GetBattlerAspect(battler) == aspect)
+        return battler + 1;
+    else if (IsBattlerAlive(BATTLE_PARTNER(battler)) && GetBattlerAspect(BATTLE_PARTNER(battler)) == aspect)
+        return BATTLE_PARTNER(battler) + 1;
+    else
+        return 0;
+}
+
+u32 IsAspectOnOpposingSide(enum BattlerId battler, enum Aspect aspect)
+{
+    return IsAspectOnSide(BATTLE_OPPOSITE(battler), aspect);
 }
 
 enum Aspect GetBattlerAspect(enum BattlerId battler)
