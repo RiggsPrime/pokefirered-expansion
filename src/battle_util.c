@@ -2582,7 +2582,7 @@ bool32 CanAspectAbsorbMove(struct BattleContext *ctx)
     switch (ctx->aspectDef)
     {
     case ASPECT_VENUSAUR:
-        if (ctx->moveType == TYPE_FIRE)
+        if ((ctx->moveType == TYPE_FIRE) && (gBattleWeather & B_WEATHER_SUN || gBattleWeather == B_WEATHER_NONE))
             battleScript = AbsorbedByDrainHpAspect(ctx->battlerDef);
         break;
     default:
